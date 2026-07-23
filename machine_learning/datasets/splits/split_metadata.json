@@ -1,0 +1,144 @@
+{
+  "random_state": 42,
+  "test_size": 0.2,
+  "run_config": "machine_learning/configs/cross_dataset_config.json",
+  "label_mapping": {
+    "0": "phishing",
+    "1": "legitimate"
+  },
+  "feature_columns": [
+    "url_length",
+    "domain_length",
+    "path_length",
+    "dot_count",
+    "hyphen_count",
+    "digit_count",
+    "special_char_count",
+    "has_https",
+    "has_ip_address",
+    "has_at_symbol",
+    "subdomain_count",
+    "query_param_count",
+    "suspicious_word_count",
+    "tld_length",
+    "has_url_shortener"
+  ],
+  "datasets": {
+    "main": {
+      "dataset": "main",
+      "display_name": "PhiUSIIL main",
+      "source_rows": 235370,
+      "train_rows": 188296,
+      "test_rows": 47074,
+      "source_label_counts": {
+        "0": 100520,
+        "1": 134850
+      },
+      "train_label_counts": {
+        "0": 80416,
+        "1": 107880
+      },
+      "test_label_counts": {
+        "0": 20104,
+        "1": 26970
+      },
+      "source_unique_urls": 235370,
+      "train_unique_urls": 188296,
+      "test_unique_urls": 47074,
+      "train_test_url_overlap": 0
+    },
+    "legitphish": {
+      "dataset": "legitphish",
+      "display_name": "LegitPhish",
+      "source_rows": 100872,
+      "train_rows": 80697,
+      "test_rows": 20175,
+      "source_label_counts": {
+        "0": 63492,
+        "1": 37380
+      },
+      "train_label_counts": {
+        "0": 50793,
+        "1": 29904
+      },
+      "test_label_counts": {
+        "0": 12699,
+        "1": 7476
+      },
+      "source_unique_urls": 100872,
+      "train_unique_urls": 80697,
+      "test_unique_urls": 20175,
+      "train_test_url_overlap": 0
+    },
+    "phishstorm": {
+      "dataset": "phishstorm",
+      "display_name": "PhishStorm",
+      "source_rows": 95910,
+      "train_rows": 76728,
+      "test_rows": 19182,
+      "source_label_counts": {
+        "0": 47901,
+        "1": 48009
+      },
+      "train_label_counts": {
+        "0": 38321,
+        "1": 38407
+      },
+      "test_label_counts": {
+        "0": 9580,
+        "1": 9602
+      },
+      "source_unique_urls": 95910,
+      "train_unique_urls": 76728,
+      "test_unique_urls": 19182,
+      "train_test_url_overlap": 0
+    }
+  },
+  "combined_split_files": {
+    "combined_dataset_train": {
+      "file": "combined_dataset_80_train_dataset.csv",
+      "description": "Combined 80 percent training split for all cross-dataset experiment datasets.",
+      "rows": 321251,
+      "source_datasets": [
+        "legitphish",
+        "main",
+        "phishstorm"
+      ],
+      "unique_urls": 321251,
+      "label_counts": {
+        "0": 168712,
+        "1": 152539
+      }
+    },
+    "combined_test": {
+      "file": "combined_dataset_20_test_dataset.csv",
+      "description": "Combined untouched 20 percent test split for all cross-dataset experiment datasets.",
+      "rows": 84975,
+      "source_datasets": [
+        "legitphish",
+        "main",
+        "phishstorm"
+      ],
+      "unique_urls": 84975,
+      "label_counts": {
+        "0": 42325,
+        "1": 42650
+      }
+    },
+    "complete_combined_dataset": {
+      "file": "combined_dataset_complete_diagnostic_dataset.csv",
+      "description": "Full combined diagnostic dataset, including train and test rows.",
+      "rows": 393918,
+      "source_datasets": [
+        "legitphish",
+        "main",
+        "phishstorm"
+      ],
+      "unique_urls": 393918,
+      "label_counts": {
+        "0": 210614,
+        "1": 183304
+      }
+    }
+  }
+}

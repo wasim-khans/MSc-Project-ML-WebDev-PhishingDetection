@@ -1,0 +1,102 @@
+{
+  "Logistic Regression": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19795,
+        309
+      ],
+      [
+        15,
+        26955
+      ]
+    ]
+  },
+  "Decision Tree": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19930,
+        174
+      ],
+      [
+        40,
+        26930
+      ]
+    ]
+  },
+  "Random Forest": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19931,
+        173
+      ],
+      [
+        37,
+        26933
+      ]
+    ]
+  },
+  "Linear SVM": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19768,
+        336
+      ],
+      [
+        2,
+        26968
+      ]
+    ]
+  },
+  "XGBoost": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19927,
+        177
+      ],
+      [
+        19,
+        26951
+      ]
+    ]
+  }
+}

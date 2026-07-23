@@ -1,0 +1,21 @@
+{
+  "test_size": 0.2,
+  "random_state": 42,
+  "models": "all",
+  "training_scenarios": [
+    "phiusiil_main",
+    "legitphish",
+    "phishstorm",
+    "combined_dataset"
+  ],
+  "test_sets": [
+    "phiusiil_main_test",
+    "legitphish_test",
+    "phishstorm_test",
+    "combined_test"
+  ],
+  "complete_test_sets": [
+    "complete_combined_dataset"
+  ],
+  "repeat_count": 3
+}

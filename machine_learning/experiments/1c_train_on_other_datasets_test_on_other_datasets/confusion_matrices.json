@@ -1,0 +1,2002 @@
+{
+  "phiusiil_main::Logistic Regression::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19795,
+        309
+      ],
+      [
+        15,
+        26955
+      ]
+    ]
+  },
+  "phiusiil_main::Logistic Regression::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12698,
+        1
+      ],
+      [
+        84,
+        1399
+      ]
+    ]
+  },
+  "phiusiil_main::Logistic Regression::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9551,
+        29
+      ],
+      [
+        9602,
+        0
+      ]
+    ]
+  },
+  "phiusiil_main::Logistic Regression::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        41986,
+        339
+      ],
+      [
+        9701,
+        26956
+      ]
+    ]
+  },
+  "phiusiil_main::Logistic Regression::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        208983,
+        1631
+      ],
+      [
+        48521,
+        134783
+      ]
+    ]
+  },
+  "phiusiil_main::Decision Tree::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19930,
+        174
+      ],
+      [
+        40,
+        26930
+      ]
+    ]
+  },
+  "phiusiil_main::Decision Tree::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12699,
+        0
+      ],
+      [
+        87,
+        1396
+      ]
+    ]
+  },
+  "phiusiil_main::Decision Tree::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9580,
+        0
+      ],
+      [
+        9602,
+        0
+      ]
+    ]
+  },
+  "phiusiil_main::Decision Tree::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        42151,
+        174
+      ],
+      [
+        9727,
+        26930
+      ]
+    ]
+  },
+  "phiusiil_main::Decision Tree::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        209805,
+        809
+      ],
+      [
+        48567,
+        134737
+      ]
+    ]
+  },
+  "phiusiil_main::Random Forest::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19932,
+        172
+      ],
+      [
+        39,
+        26931
+      ]
+    ]
+  },
+  "phiusiil_main::Random Forest::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12699,
+        0
+      ],
+      [
+        87,
+        1396
+      ]
+    ]
+  },
+  "phiusiil_main::Random Forest::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9580,
+        0
+      ],
+      [
+        9602,
+        0
+      ]
+    ]
+  },
+  "phiusiil_main::Random Forest::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        42153,
+        172
+      ],
+      [
+        9726,
+        26931
+      ]
+    ]
+  },
+  "phiusiil_main::Random Forest::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        209797,
+        817
+      ],
+      [
+        48555,
+        134749
+      ]
+    ]
+  },
+  "phiusiil_main::Linear SVM::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19768,
+        336
+      ],
+      [
+        2,
+        26968
+      ]
+    ]
+  },
+  "phiusiil_main::Linear SVM::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12660,
+        39
+      ],
+      [
+        84,
+        1399
+      ]
+    ]
+  },
+  "phiusiil_main::Linear SVM::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        7936,
+        1644
+      ],
+      [
+        6169,
+        3433
+      ]
+    ]
+  },
+  "phiusiil_main::Linear SVM::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        40311,
+        2014
+      ],
+      [
+        6255,
+        30402
+      ]
+    ]
+  },
+  "phiusiil_main::Linear SVM::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        200819,
+        9795
+      ],
+      [
+        31062,
+        152242
+      ]
+    ]
+  },
+  "phiusiil_main::XGBoost::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19928,
+        176
+      ],
+      [
+        17,
+        26953
+      ]
+    ]
+  },
+  "phiusiil_main::XGBoost::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12699,
+        0
+      ],
+      [
+        86,
+        1397
+      ]
+    ]
+  },
+  "phiusiil_main::XGBoost::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9580,
+        0
+      ],
+      [
+        9602,
+        0
+      ]
+    ]
+  },
+  "phiusiil_main::XGBoost::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        42149,
+        176
+      ],
+      [
+        9704,
+        26953
+      ]
+    ]
+  },
+  "phiusiil_main::XGBoost::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        209728,
+        886
+      ],
+      [
+        48510,
+        134794
+      ]
+    ]
+  },
+  "legitphish::Logistic Regression::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        13791,
+        6313
+      ],
+      [
+        0,
+        21078
+      ]
+    ]
+  },
+  "legitphish::Logistic Regression::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12630,
+        69
+      ],
+      [
+        7,
+        7469
+      ]
+    ]
+  },
+  "legitphish::Logistic Regression::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9345,
+        28
+      ],
+      [
+        9593,
+        9
+      ]
+    ]
+  },
+  "legitphish::Logistic Regression::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        35708,
+        6410
+      ],
+      [
+        9600,
+        27158
+      ]
+    ]
+  },
+  "legitphish::Logistic Regression::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        178589,
+        32025
+      ],
+      [
+        48001,
+        135303
+      ]
+    ]
+  },
+  "legitphish::Decision Tree::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        17760,
+        2344
+      ],
+      [
+        0,
+        21078
+      ]
+    ]
+  },
+  "legitphish::Decision Tree::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12692,
+        7
+      ],
+      [
+        8,
+        7468
+      ]
+    ]
+  },
+  "legitphish::Decision Tree::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9362,
+        11
+      ],
+      [
+        9592,
+        10
+      ]
+    ]
+  },
+  "legitphish::Decision Tree::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        39756,
+        2362
+      ],
+      [
+        9600,
+        27158
+      ]
+    ]
+  },
+  "legitphish::Decision Tree::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        198713,
+        11901
+      ],
+      [
+        47969,
+        135335
+      ]
+    ]
+  },
+  "legitphish::Random Forest::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        18978,
+        1126
+      ],
+      [
+        0,
+        21078
+      ]
+    ]
+  },
+  "legitphish::Random Forest::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12697,
+        2
+      ],
+      [
+        7,
+        7469
+      ]
+    ]
+  },
+  "legitphish::Random Forest::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9373,
+        0
+      ],
+      [
+        9602,
+        0
+      ]
+    ]
+  },
+  "legitphish::Random Forest::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        40990,
+        1128
+      ],
+      [
+        9609,
+        27149
+      ]
+    ]
+  },
+  "legitphish::Random Forest::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        205043,
+        5571
+      ],
+      [
+        48016,
+        135288
+      ]
+    ]
+  },
+  "legitphish::Linear SVM::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12425,
+        7679
+      ],
+      [
+        0,
+        21078
+      ]
+    ]
+  },
+  "legitphish::Linear SVM::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12617,
+        82
+      ],
+      [
+        4,
+        7472
+      ]
+    ]
+  },
+  "legitphish::Linear SVM::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9345,
+        28
+      ],
+      [
+        9601,
+        1
+      ]
+    ]
+  },
+  "legitphish::Linear SVM::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        34329,
+        7789
+      ],
+      [
+        9605,
+        27153
+      ]
+    ]
+  },
+  "legitphish::Linear SVM::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        171824,
+        38790
+      ],
+      [
+        48036,
+        135268
+      ]
+    ]
+  },
+  "legitphish::XGBoost::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        16923,
+        3181
+      ],
+      [
+        0,
+        21078
+      ]
+    ]
+  },
+  "legitphish::XGBoost::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12698,
+        1
+      ],
+      [
+        6,
+        7470
+      ]
+    ]
+  },
+  "legitphish::XGBoost::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        9373,
+        0
+      ],
+      [
+        9602,
+        0
+      ]
+    ]
+  },
+  "legitphish::XGBoost::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        38936,
+        3182
+      ],
+      [
+        9608,
+        27150
+      ]
+    ]
+  },
+  "legitphish::XGBoost::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        194546,
+        16068
+      ],
+      [
+        48017,
+        135287
+      ]
+    ]
+  },
+  "phishstorm::Logistic Regression::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        11013,
+        9091
+      ],
+      [
+        5544,
+        21426
+      ]
+    ]
+  },
+  "phishstorm::Logistic Regression::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12002,
+        481
+      ],
+      [
+        1539,
+        5937
+      ]
+    ]
+  },
+  "phishstorm::Logistic Regression::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        7360,
+        2220
+      ],
+      [
+        930,
+        8672
+      ]
+    ]
+  },
+  "phishstorm::Logistic Regression::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        30329,
+        11780
+      ],
+      [
+        7723,
+        34927
+      ]
+    ]
+  },
+  "phishstorm::Logistic Regression::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        151967,
+        58647
+      ],
+      [
+        32519,
+        150785
+      ]
+    ]
+  },
+  "phishstorm::Decision Tree::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        17553,
+        2551
+      ],
+      [
+        22416,
+        4554
+      ]
+    ]
+  },
+  "phishstorm::Decision Tree::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        10033,
+        2450
+      ],
+      [
+        6201,
+        1275
+      ]
+    ]
+  },
+  "phishstorm::Decision Tree::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        8537,
+        1043
+      ],
+      [
+        931,
+        8671
+      ]
+    ]
+  },
+  "phishstorm::Decision Tree::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        36069,
+        6040
+      ],
+      [
+        28372,
+        14278
+      ]
+    ]
+  },
+  "phishstorm::Decision Tree::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        183695,
+        26919
+      ],
+      [
+        113707,
+        69597
+      ]
+    ]
+  },
+  "phishstorm::Random Forest::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        18765,
+        1339
+      ],
+      [
+        24459,
+        2511
+      ]
+    ]
+  },
+  "phishstorm::Random Forest::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        11158,
+        1325
+      ],
+      [
+        6781,
+        695
+      ]
+    ]
+  },
+  "phishstorm::Random Forest::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        8614,
+        966
+      ],
+      [
+        625,
+        8977
+      ]
+    ]
+  },
+  "phishstorm::Random Forest::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        38484,
+        3625
+      ],
+      [
+        30588,
+        12062
+      ]
+    ]
+  },
+  "phishstorm::Random Forest::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        194945,
+        15669
+      ],
+      [
+        123562,
+        59742
+      ]
+    ]
+  },
+  "phishstorm::Linear SVM::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        10537,
+        9567
+      ],
+      [
+        4957,
+        22013
+      ]
+    ]
+  },
+  "phishstorm::Linear SVM::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        11892,
+        591
+      ],
+      [
+        1373,
+        6103
+      ]
+    ]
+  },
+  "phishstorm::Linear SVM::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        7233,
+        2347
+      ],
+      [
+        881,
+        8721
+      ]
+    ]
+  },
+  "phishstorm::Linear SVM::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        29619,
+        12490
+      ],
+      [
+        6949,
+        35701
+      ]
+    ]
+  },
+  "phishstorm::Linear SVM::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        148222,
+        62392
+      ],
+      [
+        29310,
+        153994
+      ]
+    ]
+  },
+  "phishstorm::XGBoost::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        17537,
+        2567
+      ],
+      [
+        15354,
+        11616
+      ]
+    ]
+  },
+  "phishstorm::XGBoost::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        11202,
+        1281
+      ],
+      [
+        4332,
+        3144
+      ]
+    ]
+  },
+  "phishstorm::XGBoost::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        8506,
+        1074
+      ],
+      [
+        469,
+        9133
+      ]
+    ]
+  },
+  "phishstorm::XGBoost::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        37191,
+        4918
+      ],
+      [
+        19356,
+        23294
+      ]
+    ]
+  },
+  "phishstorm::XGBoost::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        186188,
+        24426
+      ],
+      [
+        79158,
+        104146
+      ]
+    ]
+  },
+  "combined_dataset::Logistic Regression::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        17187,
+        2917
+      ],
+      [
+        115,
+        20963
+      ]
+    ]
+  },
+  "combined_dataset::Logistic Regression::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12404,
+        79
+      ],
+      [
+        46,
+        1437
+      ]
+    ]
+  },
+  "combined_dataset::Logistic Regression::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        7078,
+        2295
+      ],
+      [
+        1637,
+        7965
+      ]
+    ]
+  },
+  "combined_dataset::Logistic Regression::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        36619,
+        5283
+      ],
+      [
+        1789,
+        28976
+      ]
+    ]
+  },
+  "combined_dataset::Logistic Regression::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        184013,
+        26601
+      ],
+      [
+        9297,
+        174007
+      ]
+    ]
+  },
+  "combined_dataset::Decision Tree::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19826,
+        278
+      ],
+      [
+        18,
+        21060
+      ]
+    ]
+  },
+  "combined_dataset::Decision Tree::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12469,
+        14
+      ],
+      [
+        31,
+        1452
+      ]
+    ]
+  },
+  "combined_dataset::Decision Tree::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        8256,
+        1117
+      ],
+      [
+        828,
+        8774
+      ]
+    ]
+  },
+  "combined_dataset::Decision Tree::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        40497,
+        1405
+      ],
+      [
+        875,
+        29890
+      ]
+    ]
+  },
+  "combined_dataset::Decision Tree::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        206877,
+        3737
+      ],
+      [
+        1199,
+        182105
+      ]
+    ]
+  },
+  "combined_dataset::Random Forest::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19912,
+        192
+      ],
+      [
+        18,
+        21060
+      ]
+    ]
+  },
+  "combined_dataset::Random Forest::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12480,
+        3
+      ],
+      [
+        35,
+        1448
+      ]
+    ]
+  },
+  "combined_dataset::Random Forest::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        8439,
+        934
+      ],
+      [
+        664,
+        8938
+      ]
+    ]
+  },
+  "combined_dataset::Random Forest::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        40775,
+        1127
+      ],
+      [
+        716,
+        30049
+      ]
+    ]
+  },
+  "combined_dataset::Random Forest::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        207285,
+        3329
+      ],
+      [
+        1172,
+        182132
+      ]
+    ]
+  },
+  "combined_dataset::Linear SVM::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        16707,
+        3397
+      ],
+      [
+        79,
+        20999
+      ]
+    ]
+  },
+  "combined_dataset::Linear SVM::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12382,
+        101
+      ],
+      [
+        41,
+        1442
+      ]
+    ]
+  },
+  "combined_dataset::Linear SVM::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        7001,
+        2372
+      ],
+      [
+        1569,
+        8033
+      ]
+    ]
+  },
+  "combined_dataset::Linear SVM::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        36040,
+        5862
+      ],
+      [
+        1684,
+        29081
+      ]
+    ]
+  },
+  "combined_dataset::Linear SVM::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        181189,
+        29425
+      ],
+      [
+        8745,
+        174559
+      ]
+    ]
+  },
+  "combined_dataset::XGBoost::phiusiil_main_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        19900,
+        204
+      ],
+      [
+        10,
+        21068
+      ]
+    ]
+  },
+  "combined_dataset::XGBoost::legitphish_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        12474,
+        9
+      ],
+      [
+        47,
+        1436
+      ]
+    ]
+  },
+  "combined_dataset::XGBoost::phishstorm_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        8369,
+        1004
+      ],
+      [
+        562,
+        9040
+      ]
+    ]
+  },
+  "combined_dataset::XGBoost::combined_test": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        40689,
+        1213
+      ],
+      [
+        619,
+        30146
+      ]
+    ]
+  },
+  "combined_dataset::XGBoost::complete_combined_dataset": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        204690,
+        5924
+      ],
+      [
+        3103,
+        180201
+      ]
+    ]
+  }
+}

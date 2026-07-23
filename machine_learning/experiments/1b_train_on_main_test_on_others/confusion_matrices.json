@@ -1,0 +1,202 @@
+{
+  "legitphish::Decision Tree": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        63492,
+        0
+      ],
+      [
+        480,
+        36900
+      ]
+    ]
+  },
+  "legitphish::Linear SVM": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        63287,
+        205
+      ],
+      [
+        442,
+        36938
+      ]
+    ]
+  },
+  "legitphish::Logistic Regression": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        63484,
+        8
+      ],
+      [
+        462,
+        36918
+      ]
+    ]
+  },
+  "legitphish::Random Forest": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        63492,
+        0
+      ],
+      [
+        476,
+        36904
+      ]
+    ]
+  },
+  "legitphish::XGBoost": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        63492,
+        0
+      ],
+      [
+        461,
+        36919
+      ]
+    ]
+  },
+  "phishstorm::Decision Tree": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        47901,
+        0
+      ],
+      [
+        48009,
+        0
+      ]
+    ]
+  },
+  "phishstorm::Linear SVM": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        39771,
+        8130
+      ],
+      [
+        30645,
+        17364
+      ]
+    ]
+  },
+  "phishstorm::Logistic Regression": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        47777,
+        124
+      ],
+      [
+        48009,
+        0
+      ]
+    ]
+  },
+  "phishstorm::Random Forest": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        47901,
+        0
+      ],
+      [
+        48009,
+        0
+      ]
+    ]
+  },
+  "phishstorm::XGBoost": {
+    "label_order": [
+      0,
+      1
+    ],
+    "label_names": {
+      "0": "phishing",
+      "1": "legitimate"
+    },
+    "matrix": [
+      [
+        47901,
+        0
+      ],
+      [
+        48009,
+        0
+      ]
+    ]
+  }
+}

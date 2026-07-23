@@ -1,0 +1,42 @@
+{
+  "best_model": "XGBoost",
+  "selection_rule": "Highest phishing_f1, then phishing_recall, then accuracy.",
+  "dataset": "machine_learning/datasets/main/processed/phishing_url_features.csv",
+  "dataset_name": "phiusiil_main",
+  "dataset_rows": 235370,
+  "feature_columns": [
+    "url_length",
+    "domain_length",
+    "path_length",
+    "dot_count",
+    "hyphen_count",
+    "digit_count",
+    "special_char_count",
+    "has_https",
+    "has_ip_address",
+    "has_at_symbol",
+    "subdomain_count",
+    "query_param_count",
+    "suspicious_word_count",
+    "tld_length",
+    "has_url_shortener"
+  ],
+  "label_column": "label",
+  "label_mapping": {
+    "0": "phishing",
+    "1": "legitimate"
+  },
+  "test_size": 0.2,
+  "random_state": 42,
+  "training_config": "machine_learning/configs/main_training_config.json",
+  "best_model_file": "machine_learning/trained_models/1a_train_on_main_test_on_main/best_model_xgboost_T_ON_phiusiil_main_80_20.joblib",
+  "saved_model_files": {
+    "Logistic Regression": "machine_learning/trained_models/1a_train_on_main_test_on_main/logistic_regression_T_ON_phiusiil_main_80_20.joblib",
+    "Decision Tree": "machine_learning/trained_models/1a_train_on_main_test_on_main/decision_tree_T_ON_phiusiil_main_80_20.joblib",
+    "Random Forest": "machine_learning/trained_models/1a_train_on_main_test_on_main/random_forest_T_ON_phiusiil_main_80_20.joblib",
+    "Linear SVM": "machine_learning/trained_models/1a_train_on_main_test_on_main/linear_svm_T_ON_phiusiil_main_80_20.joblib",
+    "XGBoost": "machine_learning/trained_models/1a_train_on_main_test_on_main/xgboost_T_ON_phiusiil_main_80_20.joblib"
+  },
+  "svm_note": "LinearSVC is used as the SVM variant because full kernel SVM is not practical for this dataset size.",
+  "xgboost_note": "XGBoost is included as a stronger gradient-boosted tree baseline."
+}

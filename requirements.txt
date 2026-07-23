@@ -1,0 +1,2 @@
+-r machine_learning/requirements.txt
+-r backend/requirements.txt

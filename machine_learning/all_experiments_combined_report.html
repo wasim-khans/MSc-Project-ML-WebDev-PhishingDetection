@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phishing URL Detection: Simple Experiment Report</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f5f7fb;
+  --ink: #17202a;
+  --muted: #5b6675;
+  --line: #d8dee8;
+  --panel: #ffffff;
+  --accent: #126b5f;
+  --accent-soft: #dff3ee;
+  --gold: #a66a00;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+main {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 28px 20px 56px;
+}
+header {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+}
+.eyebrow {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+h1 {
+  font-size: 32px;
+  margin: 4px 0 8px;
+}
+h3 {
+  font-size: 16px;
+  margin: 18px 0 8px;
+}
+.policy {
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  margin-top: 14px;
+  padding: 10px 12px;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 14px 0;
+}
+summary {
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 16px 18px;
+}
+.panel > *:not(summary) {
+  margin-left: 18px;
+  margin-right: 18px;
+}
+.panel > :last-child {
+  margin-bottom: 18px;
+}
+.cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 12px 0;
+}
+.top-definitions {
+  margin: 16px 0;
+}
+.top-definitions h2 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+.definition-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.definition-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+.definition-card strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.definition-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+}
+.card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+.card span {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.card strong {
+  display: block;
+  font-size: 22px;
+  margin-top: 6px;
+}
+.card p {
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+.chart {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 10px 0 14px;
+  padding: 10px;
+}
+.plain-summary {
+  background: #fbfcfe;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 12px 0 16px;
+  padding: 12px 14px;
+}
+.plain-summary h4 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+.plain-summary ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.plain-summary li {
+  line-height: 1.45;
+  margin: 6px 0;
+}
+.bar-row {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(140px, 220px) 1fr 62px;
+  margin: 8px 0;
+}
+.bar-label {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+.bar-track,
+.mini-track {
+  background: #e7ebf1;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.bar-track {
+  height: 14px;
+}
+.mini-track {
+  height: 7px;
+  margin-top: 4px;
+}
+.bar-fill,
+.mini-fill {
+  background: var(--accent);
+  height: 100%;
+}
+.bar-score {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+table {
+  border-collapse: collapse;
+  margin: 10px 0 16px;
+  width: 100%;
+}
+th, td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.num {
+  text-align: right;
+}
+.compact-table {
+  max-width: 760px;
+}
+.cell-bar {
+  min-width: 88px;
+}
+code {
+  background: #eef2f7;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+.tooltip {
+  background: #e9f2ff;
+  border-radius: 999px;
+  color: #145cc7;
+  cursor: help;
+  display: inline-grid;
+  font-size: 10px;
+  height: 16px;
+  margin-left: 4px;
+  place-items: center;
+  position: relative;
+  text-transform: none;
+  width: 16px;
+}
+.tooltip::after {
+  background: #17202a;
+  border-radius: 6px;
+  color: #fff;
+  content: attr(data-tooltip);
+  display: none;
+  font-size: 12px;
+  font-weight: 400;
+  left: -8px;
+  line-height: 1.35;
+  padding: 8px 10px;
+  position: absolute;
+  text-align: left;
+  text-transform: none;
+  top: 22px;
+  width: 240px;
+  z-index: 10;
+}
+.tooltip:hover::after,
+.tooltip:focus::after {
+  display: block;
+}
+@media (max-width: 760px) {
+  main {
+    padding: 20px 12px 44px;
+  }
+  .bar-row {
+    grid-template-columns: 1fr;
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<p class="eyebrow">Phishing URL Detection</p>
+<h1>Simple Dissertation Experiment Report</h1>
+<p>Generated 2026-08-02 20:51 from the current experiment outputs.</p>
+<p class="policy">All sections use held-out test rows only. Diagnostic complete-dataset rows that include training data are excluded from this report.</p>
+</header>
+
+<section class="top-definitions" aria-label="Experiment definitions">
+<h2>Experiment Definitions</h2>
+<div class="definition-grid"><article class="definition-card"><strong>Experiment 1a</strong><p>Trained on the main PhiUSIIL dataset and tested on the main PhiUSIIL held-out 20 percent test split.</p></article><article class="definition-card"><strong>Experiment 1b</strong><p>Trained on the main PhiUSIIL dataset and tested against external datasets.</p></article><article class="definition-card"><strong>Experiment 1c</strong><p>Trained on the remaining datasets and tested against other datasets, not the dataset used for training.</p></article><article class="definition-card"><strong>Experiment 2a</strong><p>Trained on each single dataset and tested against the combined held-out test dataset.</p></article><article class="definition-card"><strong>Experiment 2b</strong><p>Trained on the combined dataset and tested against the combined held-out test dataset.</p></article><article class="definition-card"><strong>Experiment 3</strong><p>Saved models tested on 20 normal websites and 20 held-out phishing URLs to check practical false positives and missed phishing.</p></article><article class="definition-card"><strong>Experiment 4</strong><p>Google trailing-slash brittleness check, comparing predictions for https://www.google.com and https://www.google.com/.</p></article></div>
+</section>
+
+
+<details class="panel" open>
+<summary>How to Read This Report</summary>
+<p>Every experiment section is collapsible. The charts rank models by phishing F1, because phishing detection cares about both catching phishing URLs and avoiding unnecessary false alarms.</p>
+<table class="compact-table">
+<thead><tr><th>Measurement</th><th>Meaning</th></tr></thead>
+<tbody><tr><td>Accuracy</td><td>Overall correctness.</td></tr><tr><td>Precision</td><td>How trustworthy a phishing prediction is.</td></tr><tr><td>Recall</td><td>How many real phishing URLs are caught.</td></tr><tr><td>F1</td><td>Balanced phishing score used for the main ranking.</td></tr><tr><td>Mean F1</td><td>Average F1 where a section has multiple test rows.</td></tr><tr><td>Worst F1</td><td>Lowest F1, used to notice weak generalisation.</td></tr></tbody>
+</table>
+</details>
+
+
+<details class="panel" open>
+<summary>Final Summary and Recommendation</summary>
+<div class="cards">
+<article class="card"><span>Recommended backend model</span><strong>XGBoost</strong><p>Experiment 2b, trained on Combined dataset, tested on Combined held-out test.</p></article>
+<article class="card"><span>Practical sanity winner</span><strong>Logistic Regression</strong><p>Experiment 3, trained on LegitPhish: 40/40 correct, 0 false positives.</p></article>
+<article class="card"><span>Decision score</span><strong>0.9780 F1</strong></article>
+<article class="card"><span>Decision rule</span><strong>F1 first</strong><p>Recall, precision, and accuracy support the conclusion.</p></article>
+</div>
+<p>Models are ranked primarily by phishing F1. Recall, precision, and accuracy are used as supporting evidence. For experiments with more than one test row, the report uses mean F1 and also shows worst F1 so a model is not judged from one lucky result only.</p>
+<h3>Which Model Is Better Where?</h3>
+<table><thead><tr><th>Experiment <span class="tooltip" tabindex="0" data-tooltip="The experiment section this row belongs to.">?</span></th><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Tested On <span class="tooltip" tabindex="0" data-tooltip="The held-out dataset used to judge predictions.">?</span></th><th class="num">Mean F1 <span class="tooltip" tabindex="0" data-tooltip="Average phishing F1 across the rows in this experiment section.">?</span></th><th class="num">Worst F1 <span class="tooltip" tabindex="0" data-tooltip="Lowest phishing F1 for this model in this experiment section.">?</span></th><th class="num">Best F1 <span class="tooltip" tabindex="0" data-tooltip="Best exact phishing F1 row for this model inside the experiment section.">?</span></th><th>Why <span class="tooltip" tabindex="0" data-tooltip="Short explanation of why the model is treated as strongest in that section.">?</span></th></tr></thead><tbody><tr><td>1a</td><td>XGBoost</td><td>PhiUSIIL main</td><td>PhiUSIIL held-out test</td><td class="num">0.9951</td><td class="num">0.9951</td><td class="num">0.9951</td><td>Best same-source PhiUSIIL baseline on the 80/20 test split.</td></tr><tr><td>1b</td><td>Linear SVM</td><td>PhiUSIIL main</td><td>LegitPhish</td><td class="num">0.8336</td><td class="num">0.6723</td><td class="num">0.9949</td><td>Best average external-test performance for models trained only on PhiUSIIL. Best single row: XGBoost trained on PhiUSIIL main, tested on LegitPhish.</td></tr><tr><td>1c</td><td>XGBoost</td><td>LegitPhish</td><td>PhiUSIIL held-out test</td><td class="num">0.7592</td><td class="num">0.6613</td><td class="num">0.9141</td><td>Best average cross-source result when the test dataset is not the training dataset. Best single row: Random Forest trained on LegitPhish, tested on PhiUSIIL held-out test.</td></tr><tr><td>2a</td><td>XGBoost</td><td>PhiUSIIL main</td><td>Combined held-out test</td><td class="num">0.8360</td><td class="num">0.7540</td><td class="num">0.8951</td><td>Best average single-source training result on the mixed combined held-out test set. Best single row: Linear SVM trained on PhiUSIIL main, tested on Combined held-out test.</td></tr><tr><td>2b</td><td>XGBoost</td><td>Combined dataset</td><td>Combined held-out test</td><td class="num">0.9780</td><td class="num">0.9780</td><td class="num">0.9780</td><td>This is the most backend-like scenario: combined training data and a separate combined held-out test set.</td></tr></tbody></table>
+<h3>Overall Model Ranking Rows</h3>
+<table><thead><tr><th>Experiment <span class="tooltip" tabindex="0" data-tooltip="The experiment section this row belongs to.">?</span></th><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th class="num">Mean F1 <span class="tooltip" tabindex="0" data-tooltip="Average phishing F1 across the rows in this experiment section.">?</span></th><th class="num">Worst F1 <span class="tooltip" tabindex="0" data-tooltip="Lowest phishing F1 for this model in this experiment section.">?</span></th><th class="num">Evaluations <span class="tooltip" tabindex="0" data-tooltip="Number of trained-model/test-dataset rows used in the average.">?</span></th></tr></thead><tbody><tr><td>1a</td><td>XGBoost</td><td class="num">0.9951</td><td class="num">0.9951</td><td class="num">1</td></tr><tr><td>1a</td><td>Random Forest</td><td class="num">0.9948</td><td class="num">0.9948</td><td class="num">1</td></tr><tr><td>1a</td><td>Decision Tree</td><td class="num">0.9947</td><td class="num">0.9947</td><td class="num">1</td></tr><tr><td>1a</td><td>Logistic Regression</td><td class="num">0.9919</td><td class="num">0.9919</td><td class="num">1</td></tr><tr><td>1a</td><td>Linear SVM</td><td class="num">0.9915</td><td class="num">0.9915</td><td class="num">1</td></tr><tr><td>2b</td><td>XGBoost</td><td class="num">0.9780</td><td class="num">0.9780</td><td class="num">1</td></tr><tr><td>2b</td><td>Random Forest</td><td class="num">0.9779</td><td class="num">0.9779</td><td class="num">1</td></tr><tr><td>2b</td><td>Decision Tree</td><td class="num">0.9726</td><td class="num">0.9726</td><td class="num">1</td></tr><tr><td>2b</td><td>Logistic Regression</td><td class="num">0.9119</td><td class="num">0.9119</td><td class="num">1</td></tr><tr><td>2b</td><td>Linear SVM</td><td class="num">0.9052</td><td class="num">0.9052</td><td class="num">1</td></tr></tbody></table>
+</details>
+
+
+<details class="panel">
+<summary>Experiment 1a: Each model trained and tested on the main PhiUSIIL dataset</summary>
+
+<p>80/20 split on PhiUSIIL only. This is the same-source baseline.</p>
+<div class="cards">
+<article class="card"><span>Best model average</span><strong>XGBoost</strong><p>mean F1 0.9951; worst F1 0.9951</p></article>
+<article class="card"><span>Best exact result</span><strong>XGBoost</strong><p>trained on PhiUSIIL main; tested on PhiUSIIL held-out test</p></article>
+<article class="card"><span>Best exact F1</span><strong>0.9951 F1</strong></article>
+<article class="card"><span>Rows in section</span><strong>5 rows</strong></article>
+</div>
+<h3>Model Ranking</h3>
+<div class="chart"><div class="bar-row"><span class="bar-label">XGBoost</span><div class="bar-track"><div class="bar-fill" style="width:99.51061173533084%"></div></div><span class="bar-score">0.9951</span></div><div class="bar-row"><span class="bar-label">Random Forest</span><div class="bar-track"><div class="bar-fill" style="width:99.47594330205631%"></div></div><span class="bar-score">0.9948</span></div><div class="bar-row"><span class="bar-label">Decision Tree</span><div class="bar-track"><div class="bar-fill" style="width:99.46598792234369%"></div></div><span class="bar-score">0.9947</span></div><div class="bar-row"><span class="bar-label">Logistic Regression</span><div class="bar-track"><div class="bar-fill" style="width:99.18825474770756%"></div></div><span class="bar-score">0.9919</span></div><div class="bar-row"><span class="bar-label">Linear SVM</span><div class="bar-track"><div class="bar-fill" style="width:99.15232983899284%"></div></div><span class="bar-score">0.9915</span></div></div>
+
+<section class="plain-summary">
+<h4>Plain-English Summary</h4>
+<ul><li>Winner: XGBoost is ranked first because it has the highest F1 in this experiment: 0.9951. F1 is the main score here because it balances catching phishing URLs with avoiding false phishing alarms.</li><li>For this winner, precision is 0.9990, recall is 0.9912, and accuracy is 0.9958. Precision means how trustworthy its phishing warnings are; recall means how many real phishing URLs it catches.</li><li>Runner-up: Random Forest is second with F1 0.9948. The gap from the winner is 0.0003, so the result is almost tied and should be treated as very close.</li><li>The best exact row for the winner is trained on PhiUSIIL main and tested on PhiUSIIL held-out test, with F1 0.9951.</li><li>Measurement note: precision and recall are fairly balanced, so the F1 score is a reasonable single summary for this section.</li><li>Conclusion: for Experiment 1a, XGBoost gives the strongest current held-out evidence under this training/testing setup.</li></ul>
+</section>
+
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th class="num">Mean F1 <span class="tooltip" tabindex="0" data-tooltip="Average phishing F1 across the rows in this experiment section.">?</span></th><th class="num">Worst F1 <span class="tooltip" tabindex="0" data-tooltip="Lowest phishing F1 for this model in this experiment section.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Evaluations <span class="tooltip" tabindex="0" data-tooltip="Number of trained-model/test-dataset rows used in the average.">?</span></th></tr></thead><tbody><tr><td>XGBoost</td><td class="num">0.9951</td><td class="num">0.9951</td><td class="num">0.9912</td><td class="num">0.9990</td><td class="num">0.9958</td><td class="num">1</td></tr><tr><td>Random Forest</td><td class="num">0.9948</td><td class="num">0.9948</td><td class="num">0.9914</td><td class="num">0.9981</td><td class="num">0.9955</td><td class="num">1</td></tr><tr><td>Decision Tree</td><td class="num">0.9947</td><td class="num">0.9947</td><td class="num">0.9913</td><td class="num">0.9980</td><td class="num">0.9955</td><td class="num">1</td></tr><tr><td>Logistic Regression</td><td class="num">0.9919</td><td class="num">0.9919</td><td class="num">0.9846</td><td class="num">0.9992</td><td class="num">0.9931</td><td class="num">1</td></tr><tr><td>Linear SVM</td><td class="num">0.9915</td><td class="num">0.9915</td><td class="num">0.9833</td><td class="num">0.9999</td><td class="num">0.9928</td><td class="num">1</td></tr></tbody></table>
+<h3>Exact Held-Out Results</h3>
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Tested On <span class="tooltip" tabindex="0" data-tooltip="The held-out dataset used to judge predictions.">?</span></th><th class="num">Rows <span class="tooltip" tabindex="0" data-tooltip="Number of URL rows scored in this test.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">F1 <span class="tooltip" tabindex="0" data-tooltip="A balanced score combining phishing precision and phishing recall.">?</span></th></tr></thead><tbody><tr><td>XGBoost</td><td>PhiUSIIL main</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.9958</td><td class="num">0.9990</td><td class="num">0.9912</td><td class="num"><div class="cell-bar"><span>0.9951</span><div class="mini-track"><div class="mini-fill" style="width:99.51061173533084%"></div></div></div></td></tr><tr><td>Random Forest</td><td>PhiUSIIL main</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.9955</td><td class="num">0.9981</td><td class="num">0.9914</td><td class="num"><div class="cell-bar"><span>0.9948</span><div class="mini-track"><div class="mini-fill" style="width:99.47594330205631%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>PhiUSIIL main</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.9955</td><td class="num">0.9980</td><td class="num">0.9913</td><td class="num"><div class="cell-bar"><span>0.9947</span><div class="mini-track"><div class="mini-fill" style="width:99.46598792234369%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>PhiUSIIL main</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.9931</td><td class="num">0.9992</td><td class="num">0.9846</td><td class="num"><div class="cell-bar"><span>0.9919</span><div class="mini-track"><div class="mini-fill" style="width:99.18825474770756%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>PhiUSIIL main</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.9928</td><td class="num">0.9999</td><td class="num">0.9833</td><td class="num"><div class="cell-bar"><span>0.9915</span><div class="mini-track"><div class="mini-fill" style="width:99.15232983899284%"></div></div></div></td></tr></tbody></table>
+
+</details>
+
+
+<details class="panel">
+<summary>Experiment 1b: Main-trained models tested against external datasets</summary>
+
+<p>Models are trained on PhiUSIIL and tested on external held-out datasets.</p>
+<div class="cards">
+<article class="card"><span>Best model average</span><strong>Linear SVM</strong><p>mean F1 0.8336; worst F1 0.6723</p></article>
+<article class="card"><span>Best exact result</span><strong>XGBoost</strong><p>trained on PhiUSIIL main; tested on LegitPhish</p></article>
+<article class="card"><span>Best exact F1</span><strong>0.9964 F1</strong></article>
+<article class="card"><span>Rows in section</span><strong>10 rows</strong></article>
+</div>
+<h3>Model Ranking</h3>
+<div class="chart"><div class="bar-row"><span class="bar-label">Linear SVM</span><div class="bar-track"><div class="bar-fill" style="width:83.35965352574506%"></div></div><span class="bar-score">0.8336</span></div><div class="bar-row"><span class="bar-label">XGBoost</span><div class="bar-track"><div class="bar-fill" style="width:83.12743814493932%"></div></div><span class="bar-score">0.8313</span></div><div class="bar-row"><span class="bar-label">Random Forest</span><div class="bar-track"><div class="bar-fill" style="width:83.12157523057397%"></div></div><span class="bar-score">0.8312</span></div><div class="bar-row"><span class="bar-label">Decision Tree</span><div class="bar-track"><div class="bar-fill" style="width:83.1200120197928%"></div></div><span class="bar-score">0.8312</span></div><div class="bar-row"><span class="bar-label">Logistic Regression</span><div class="bar-track"><div class="bar-fill" style="width:83.06634301791934%"></div></div><span class="bar-score">0.8307</span></div></div>
+
+<section class="plain-summary">
+<h4>Plain-English Summary</h4>
+<ul><li>Winner: Linear SVM is ranked first because it has the highest mean F1 in this experiment: 0.8336. F1 is the main score here because it balances catching phishing URLs with avoiding false phishing alarms.</li><li>For this winner, precision is 0.7789, recall is 0.9135, and accuracy is 0.7947. Precision means how trustworthy its phishing warnings are; recall means how many real phishing URLs it catches.</li><li>Runner-up: XGBoost is second with mean F1 0.8313. The gap from the winner is 0.0023, so the runner-up is close, so both models are competitive here.</li><li>Robustness check: the winner&#x27;s worst F1 in this section is 0.6723. The drop from mean F1 is 0.1613, which shows how much its performance changes across the tested datasets in this experiment.</li><li>Best single held-out row: XGBoost has the highest individual F1 result, 0.9964, when trained on PhiUSIIL main and tested on LegitPhish. The section winner is still Linear SVM because the section ranking is based on overall model performance across the experiment rows.</li><li>Measurement note: recall is higher than precision by 0.1346, so this model catches more phishing URLs but may create more false phishing alarms.</li><li>Conclusion: for Experiment 1b, Linear SVM gives the strongest current held-out evidence under this training/testing setup.</li></ul>
+</section>
+
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th class="num">Mean F1 <span class="tooltip" tabindex="0" data-tooltip="Average phishing F1 across the rows in this experiment section.">?</span></th><th class="num">Worst F1 <span class="tooltip" tabindex="0" data-tooltip="Lowest phishing F1 for this model in this experiment section.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Evaluations <span class="tooltip" tabindex="0" data-tooltip="Number of trained-model/test-dataset rows used in the average.">?</span></th></tr></thead><tbody><tr><td>Linear SVM</td><td class="num">0.8336</td><td class="num">0.6723</td><td class="num">0.9135</td><td class="num">0.7789</td><td class="num">0.7947</td><td class="num">2</td></tr><tr><td>XGBoost</td><td class="num">0.8313</td><td class="num">0.6662</td><td class="num">1.0000</td><td class="num">0.7461</td><td class="num">0.7474</td><td class="num">2</td></tr><tr><td>Random Forest</td><td class="num">0.8312</td><td class="num">0.6662</td><td class="num">1.0000</td><td class="num">0.7460</td><td class="num">0.7474</td><td class="num">2</td></tr><tr><td>Decision Tree</td><td class="num">0.8312</td><td class="num">0.6662</td><td class="num">1.0000</td><td class="num">0.7460</td><td class="num">0.7473</td><td class="num">2</td></tr><tr><td>Logistic Regression</td><td class="num">0.8307</td><td class="num">0.6650</td><td class="num">0.9986</td><td class="num">0.7458</td><td class="num">0.7467</td><td class="num">2</td></tr></tbody></table>
+<h3>Exact Held-Out Results</h3>
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Tested On <span class="tooltip" tabindex="0" data-tooltip="The held-out dataset used to judge predictions.">?</span></th><th class="num">Rows <span class="tooltip" tabindex="0" data-tooltip="Number of URL rows scored in this test.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">F1 <span class="tooltip" tabindex="0" data-tooltip="A balanced score combining phishing precision and phishing recall.">?</span></th></tr></thead><tbody><tr><td>XGBoost</td><td>PhiUSIIL main</td><td>LegitPhish</td><td class="num">100,872</td><td class="num">0.9954</td><td class="num">0.9928</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.9964</span><div class="mini-track"><div class="mini-fill" style="width:99.638275334458%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>PhiUSIIL main</td><td>LegitPhish</td><td class="num">100,872</td><td class="num">0.9953</td><td class="num">0.9928</td><td class="num">0.9999</td><td class="num"><div class="cell-bar"><span>0.9963</span><div class="mini-track"><div class="mini-fill" style="width:99.63119320767746%"></div></div></div></td></tr><tr><td>Random Forest</td><td>PhiUSIIL main</td><td>LegitPhish</td><td class="num">100,872</td><td class="num">0.9953</td><td class="num">0.9926</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.9963</span><div class="mini-track"><div class="mini-fill" style="width:99.62654950572728%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>PhiUSIIL main</td><td>LegitPhish</td><td class="num">100,872</td><td class="num">0.9952</td><td class="num">0.9925</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.9962</span><div class="mini-track"><div class="mini-fill" style="width:99.62342308416494%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>PhiUSIIL main</td><td>LegitPhish</td><td class="num">100,872</td><td class="num">0.9936</td><td class="num">0.9931</td><td class="num">0.9968</td><td class="num"><div class="cell-bar"><span>0.9949</span><div class="mini-track"><div class="mini-fill" style="width:99.4914361622688%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>PhiUSIIL main</td><td>PhishStorm</td><td class="num">95,910</td><td class="num">0.5957</td><td class="num">0.5648</td><td class="num">0.8303</td><td class="num"><div class="cell-bar"><span>0.6723</span><div class="mini-track"><div class="mini-fill" style="width:67.22787088922134%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>PhiUSIIL main</td><td>PhishStorm</td><td class="num">95,910</td><td class="num">0.4994</td><td class="num">0.4994</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.6662</span><div class="mini-track"><div class="mini-fill" style="width:66.61660095542065%"></div></div></div></td></tr><tr><td>Random Forest</td><td>PhiUSIIL main</td><td>PhishStorm</td><td class="num">95,910</td><td class="num">0.4994</td><td class="num">0.4994</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.6662</span><div class="mini-track"><div class="mini-fill" style="width:66.61660095542065%"></div></div></div></td></tr><tr><td>XGBoost</td><td>PhiUSIIL main</td><td>PhishStorm</td><td class="num">95,910</td><td class="num">0.4994</td><td class="num">0.4994</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.6662</span><div class="mini-track"><div class="mini-fill" style="width:66.61660095542065%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>PhiUSIIL main</td><td>PhishStorm</td><td class="num">95,910</td><td class="num">0.4981</td><td class="num">0.4988</td><td class="num">0.9974</td><td class="num"><div class="cell-bar"><span>0.6650</span><div class="mini-track"><div class="mini-fill" style="width:66.50149282816122%"></div></div></div></td></tr></tbody></table>
+
+</details>
+
+
+<details class="panel">
+<summary>Experiment 1c: External-trained models tested against other single-source datasets</summary>
+
+<p>Models are trained on LegitPhish or PhishStorm, then tested on different held-out datasets only.</p>
+<div class="cards">
+<article class="card"><span>Best model average</span><strong>XGBoost</strong><p>mean F1 0.7592; worst F1 0.6613</p></article>
+<article class="card"><span>Best exact result</span><strong>Random Forest</strong><p>trained on LegitPhish; tested on PhiUSIIL held-out test</p></article>
+<article class="card"><span>Best exact F1</span><strong>0.9712 F1</strong></article>
+<article class="card"><span>Rows in section</span><strong>20 rows</strong></article>
+</div>
+<h3>Model Ranking</h3>
+<div class="chart"><div class="bar-row"><span class="bar-label">XGBoost</span><div class="bar-track"><div class="bar-fill" style="width:75.92160776519098%"></div></div><span class="bar-score">0.7592</span></div><div class="bar-row"><span class="bar-label">Logistic Regression</span><div class="bar-track"><div class="bar-fill" style="width:74.92742627040083%"></div></div><span class="bar-score">0.7493</span></div><div class="bar-row"><span class="bar-label">Random Forest</span><div class="bar-track"><div class="bar-fill" style="width:73.96617362118232%"></div></div><span class="bar-score">0.7397</span></div><div class="bar-row"><span class="bar-label">Linear SVM</span><div class="bar-track"><div class="bar-fill" style="width:73.49091083998763%"></div></div><span class="bar-score">0.7349</span></div><div class="bar-row"><span class="bar-label">Decision Tree</span><div class="bar-track"><div class="bar-fill" style="width:72.05569763498985%"></div></div><span class="bar-score">0.7206</span></div></div>
+
+<section class="plain-summary">
+<h4>Plain-English Summary</h4>
+<ul><li>Winner: XGBoost is ranked first because it has the highest mean F1 in this experiment: 0.7592. F1 is the main score here because it balances catching phishing URLs with avoiding false phishing alarms.</li><li>For this winner, precision is 0.6871, recall is 0.9029, and accuracy is 0.6887. Precision means how trustworthy its phishing warnings are; recall means how many real phishing URLs it catches.</li><li>Runner-up: Logistic Regression is second with mean F1 0.7493. The gap from the winner is 0.0099, so the runner-up is close, so both models are competitive here.</li><li>Robustness check: the winner&#x27;s worst F1 in this section is 0.6613. The drop from mean F1 is 0.0979, which shows how much its performance changes across the tested datasets in this experiment.</li><li>Best single held-out row: Random Forest has the highest individual F1 result, 0.9712, when trained on LegitPhish and tested on PhiUSIIL held-out test. The section winner is still XGBoost because the section ranking is based on overall model performance across the experiment rows.</li><li>Measurement note: recall is higher than precision by 0.2158, so this model catches more phishing URLs but may create more false phishing alarms.</li><li>Conclusion: for Experiment 1c, XGBoost gives the strongest current held-out evidence under this training/testing setup.</li></ul>
+</section>
+
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th class="num">Mean F1 <span class="tooltip" tabindex="0" data-tooltip="Average phishing F1 across the rows in this experiment section.">?</span></th><th class="num">Worst F1 <span class="tooltip" tabindex="0" data-tooltip="Lowest phishing F1 for this model in this experiment section.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Evaluations <span class="tooltip" tabindex="0" data-tooltip="Number of trained-model/test-dataset rows used in the average.">?</span></th></tr></thead><tbody><tr><td>XGBoost</td><td class="num">0.7592</td><td class="num">0.6613</td><td class="num">0.9029</td><td class="num">0.6871</td><td class="num">0.6887</td><td class="num">4</td></tr><tr><td>Logistic Regression</td><td class="num">0.7493</td><td class="num">0.6008</td><td class="num">0.7981</td><td class="num">0.7612</td><td class="num">0.7319</td><td class="num">4</td></tr><tr><td>Random Forest</td><td class="num">0.7397</td><td class="num">0.5926</td><td class="num">0.9428</td><td class="num">0.6375</td><td class="num">0.6281</td><td class="num">4</td></tr><tr><td>Linear SVM</td><td class="num">0.7349</td><td class="num">0.5920</td><td class="num">0.7730</td><td class="num">0.7675</td><td class="num">0.7248</td><td class="num">4</td></tr><tr><td>Decision Tree</td><td class="num">0.7206</td><td class="num">0.5844</td><td class="num">0.8898</td><td class="num">0.6378</td><td class="num">0.6183</td><td class="num">4</td></tr></tbody></table>
+<h3>Exact Held-Out Results</h3>
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Tested On <span class="tooltip" tabindex="0" data-tooltip="The held-out dataset used to judge predictions.">?</span></th><th class="num">Rows <span class="tooltip" tabindex="0" data-tooltip="Number of URL rows scored in this test.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">F1 <span class="tooltip" tabindex="0" data-tooltip="A balanced score combining phishing precision and phishing recall.">?</span></th></tr></thead><tbody><tr><td>Random Forest</td><td>LegitPhish</td><td>PhiUSIIL held-out test</td><td class="num">41,182</td><td class="num">0.9727</td><td class="num">1.0000</td><td class="num">0.9440</td><td class="num"><div class="cell-bar"><span>0.9712</span><div class="mini-track"><div class="mini-fill" style="width:97.11887825597462%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>LegitPhish</td><td>PhiUSIIL held-out test</td><td class="num">41,182</td><td class="num">0.9431</td><td class="num">1.0000</td><td class="num">0.8834</td><td class="num"><div class="cell-bar"><span>0.9381</span><div class="mini-track"><div class="mini-fill" style="width:93.80942319881682%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>PhishStorm</td><td>LegitPhish held-out test</td><td class="num">19,959</td><td class="num">0.9016</td><td class="num">0.8965</td><td class="num">0.9527</td><td class="num"><div class="cell-bar"><span>0.9237</span><div class="mini-track"><div class="mini-fill" style="width:92.37222308528817%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>PhishStorm</td><td>LegitPhish held-out test</td><td class="num">19,959</td><td class="num">0.8988</td><td class="num">0.8863</td><td class="num">0.9615</td><td class="num"><div class="cell-bar"><span>0.9224</span><div class="mini-track"><div class="mini-fill" style="width:92.23793421457115%"></div></div></div></td></tr><tr><td>XGBoost</td><td>LegitPhish</td><td>PhiUSIIL held-out test</td><td class="num">41,182</td><td class="num">0.9228</td><td class="num">1.0000</td><td class="num">0.8418</td><td class="num"><div class="cell-bar"><span>0.9141</span><div class="mini-track"><div class="mini-fill" style="width:91.4089718313663%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>LegitPhish</td><td>PhiUSIIL held-out test</td><td class="num">41,182</td><td class="num">0.8467</td><td class="num">1.0000</td><td class="num">0.6860</td><td class="num"><div class="cell-bar"><span>0.8137</span><div class="mini-track"><div class="mini-fill" style="width:81.3748340463195%"></div></div></div></td></tr><tr><td>XGBoost</td><td>PhishStorm</td><td>LegitPhish held-out test</td><td class="num">19,959</td><td class="num">0.7188</td><td class="num">0.7211</td><td class="num">0.8974</td><td class="num"><div class="cell-bar"><span>0.7997</span><div class="mini-track"><div class="mini-fill" style="width:79.96573508941%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>LegitPhish</td><td>PhiUSIIL held-out test</td><td class="num">41,182</td><td class="num">0.8135</td><td class="num">1.0000</td><td class="num">0.6180</td><td class="num"><div class="cell-bar"><span>0.7639</span><div class="mini-track"><div class="mini-fill" style="width:76.39337206800086%"></div></div></div></td></tr><tr><td>Random Forest</td><td>PhishStorm</td><td>LegitPhish held-out test</td><td class="num">19,959</td><td class="num">0.5939</td><td class="num">0.6220</td><td class="num">0.8939</td><td class="num"><div class="cell-bar"><span>0.7335</span><div class="mini-track"><div class="mini-fill" style="width:73.35480901978832%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>PhishStorm</td><td>LegitPhish held-out test</td><td class="num">19,959</td><td class="num">0.5666</td><td class="num">0.6180</td><td class="num">0.8037</td><td class="num"><div class="cell-bar"><span>0.6987</span><div class="mini-track"><div class="mini-fill" style="width:69.8749869415329%"></div></div></div></td></tr><tr><td>XGBoost</td><td>PhishStorm</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.6193</td><td class="num">0.5332</td><td class="num">0.8723</td><td class="num"><div class="cell-bar"><span>0.6618</span><div class="mini-track"><div class="mini-fill" style="width:66.18360222662515%"></div></div></div></td></tr><tr><td>Random Forest</td><td>LegitPhish</td><td>PhishStorm held-out test</td><td class="num">18,975</td><td class="num">0.4940</td><td class="num">0.4940</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.6613</span><div class="mini-track"><div class="mini-fill" style="width:66.12812191336249%"></div></div></div></td></tr><tr><td>XGBoost</td><td>LegitPhish</td><td>PhishStorm held-out test</td><td class="num">18,975</td><td class="num">0.4940</td><td class="num">0.4940</td><td class="num">1.0000</td><td class="num"><div class="cell-bar"><span>0.6613</span><div class="mini-track"><div class="mini-fill" style="width:66.12812191336249%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>LegitPhish</td><td>PhishStorm held-out test</td><td class="num">18,975</td><td class="num">0.4939</td><td class="num">0.4939</td><td class="num">0.9988</td><td class="num"><div class="cell-bar"><span>0.6610</span><div class="mini-track"><div class="mini-fill" style="width:66.09948106047234%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>LegitPhish</td><td>PhishStorm held-out test</td><td class="num">18,975</td><td class="num">0.4930</td><td class="num">0.4935</td><td class="num">0.9970</td><td class="num"><div class="cell-bar"><span>0.6602</span><div class="mini-track"><div class="mini-fill" style="width:66.01674260887994%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>LegitPhish</td><td>PhishStorm held-out test</td><td class="num">18,975</td><td class="num">0.4925</td><td class="num">0.4932</td><td class="num">0.9970</td><td class="num"><div class="cell-bar"><span>0.6600</span><div class="mini-track"><div class="mini-fill" style="width:65.99809315300682%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>PhishStorm</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.6891</td><td class="num">0.6652</td><td class="num">0.5478</td><td class="num"><div class="cell-bar"><span>0.6008</span><div class="mini-track"><div class="mini-fill" style="width:60.08019421183274%"></div></div></div></td></tr><tr><td>Random Forest</td><td>PhishStorm</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.4520</td><td class="num">0.4341</td><td class="num">0.9334</td><td class="num"><div class="cell-bar"><span>0.5926</span><div class="mini-track"><div class="mini-fill" style="width:59.26288529560384%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>PhishStorm</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.6915</td><td class="num">0.6801</td><td class="num">0.5241</td><td class="num"><div class="cell-bar"><span>0.5920</span><div class="mini-track"><div class="mini-fill" style="width:59.1999550536547%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>PhishStorm</td><td>PhiUSIIL held-out test</td><td class="num">47,074</td><td class="num">0.4696</td><td class="num">0.4392</td><td class="num">0.8731</td><td class="num"><div class="cell-bar"><span>0.5844</span><div class="mini-track"><div class="mini-fill" style="width:58.438899339137386%"></div></div></div></td></tr></tbody></table>
+
+</details>
+
+
+<details class="panel">
+<summary>Experiment 2a: Single-source models tested against the combined held-out dataset</summary>
+
+<p>Each model is trained on one source dataset and tested on the mixed combined test set.</p>
+<div class="cards">
+<article class="card"><span>Best model average</span><strong>XGBoost</strong><p>mean F1 0.8360; worst F1 0.7540</p></article>
+<article class="card"><span>Best exact result</span><strong>Linear SVM</strong><p>trained on PhiUSIIL main; tested on Combined held-out test</p></article>
+<article class="card"><span>Best exact F1</span><strong>0.9070 F1</strong></article>
+<article class="card"><span>Rows in section</span><strong>15 rows</strong></article>
+</div>
+<h3>Model Ranking</h3>
+<div class="chart"><div class="bar-row"><span class="bar-label">XGBoost</span><div class="bar-track"><div class="bar-fill" style="width:83.59906548484126%"></div></div><span class="bar-score">0.8360</span></div><div class="bar-row"><span class="bar-label">Random Forest</span><div class="bar-track"><div class="bar-fill" style="width:82.3800901297673%"></div></div><span class="bar-score">0.8238</span></div><div class="bar-row"><span class="bar-label">Logistic Regression</span><div class="bar-track"><div class="bar-fill" style="width:82.22603195331058%"></div></div><span class="bar-score">0.8223</span></div><div class="bar-row"><span class="bar-label">Linear SVM</span><div class="bar-track"><div class="bar-fill" style="width:81.92562960144998%"></div></div><span class="bar-score">0.8193</span></div><div class="bar-row"><span class="bar-label">Decision Tree</span><div class="bar-track"><div class="bar-fill" style="width:81.37206824578541%"></div></div><span class="bar-score">0.8137</span></div></div>
+
+<section class="plain-summary">
+<h4>Plain-English Summary</h4>
+<ul><li>Winner: XGBoost is ranked first because it has the highest mean F1 in this experiment: 0.8360. F1 is the main score here because it balances catching phishing URLs with avoiding false phishing alarms.</li><li>For this winner, precision is 0.7575, recall is 0.9345, and accuracy is 0.8088. Precision means how trustworthy its phishing warnings are; recall means how many real phishing URLs it catches.</li><li>Runner-up: Random Forest is second with mean F1 0.8238. The gap from the winner is 0.0122, so the winner has a noticeable advantage in this section.</li><li>Robustness check: the winner&#x27;s worst F1 in this section is 0.7540. The drop from mean F1 is 0.0820, which shows how much its performance changes across the tested datasets in this experiment.</li><li>Best single held-out row: Linear SVM has the highest individual F1 result, 0.9070, when trained on PhiUSIIL main and tested on Combined held-out test. The section winner is still XGBoost because the section ranking is based on overall model performance across the experiment rows.</li><li>Measurement note: recall is higher than precision by 0.1770, so this model catches more phishing URLs but may create more false phishing alarms.</li><li>Conclusion: for Experiment 2a, XGBoost gives the strongest current held-out evidence under this training/testing setup.</li></ul>
+</section>
+
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th class="num">Mean F1 <span class="tooltip" tabindex="0" data-tooltip="Average phishing F1 across the rows in this experiment section.">?</span></th><th class="num">Worst F1 <span class="tooltip" tabindex="0" data-tooltip="Lowest phishing F1 for this model in this experiment section.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Evaluations <span class="tooltip" tabindex="0" data-tooltip="Number of trained-model/test-dataset rows used in the average.">?</span></th></tr></thead><tbody><tr><td>XGBoost</td><td class="num">0.8360</td><td class="num">0.7540</td><td class="num">0.9345</td><td class="num">0.7575</td><td class="num">0.8088</td><td class="num">3</td></tr><tr><td>Random Forest</td><td class="num">0.8238</td><td class="num">0.6923</td><td class="num">0.9610</td><td class="num">0.7266</td><td class="num">0.7783</td><td class="num">3</td></tr><tr><td>Logistic Regression</td><td class="num">0.8223</td><td class="num">0.7567</td><td class="num">0.8533</td><td class="num">0.7992</td><td class="num">0.8133</td><td class="num">3</td></tr><tr><td>Linear SVM</td><td class="num">0.8193</td><td class="num">0.7529</td><td class="num">0.8236</td><td class="num">0.8190</td><td class="num">0.8151</td><td class="num">3</td></tr><tr><td>Decision Tree</td><td class="num">0.8137</td><td class="num">0.6770</td><td class="num">0.9321</td><td class="num">0.7259</td><td class="num">0.7723</td><td class="num">3</td></tr></tbody></table>
+<h3>Exact Held-Out Results</h3>
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Tested On <span class="tooltip" tabindex="0" data-tooltip="The held-out dataset used to judge predictions.">?</span></th><th class="num">Rows <span class="tooltip" tabindex="0" data-tooltip="Number of URL rows scored in this test.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">F1 <span class="tooltip" tabindex="0" data-tooltip="A balanced score combining phishing precision and phishing recall.">?</span></th></tr></thead><tbody><tr><td>Linear SVM</td><td>PhiUSIIL main</td><td>Combined held-out test</td><td class="num">78,982</td><td class="num">0.8953</td><td class="num">0.8657</td><td class="num">0.9524</td><td class="num"><div class="cell-bar"><span>0.9070</span><div class="mini-track"><div class="mini-fill" style="width:90.6975959320966%"></div></div></div></td></tr><tr><td>XGBoost</td><td>PhiUSIIL main</td><td>Combined held-out test</td><td class="num">78,982</td><td class="num">0.8749</td><td class="num">0.8129</td><td class="num">0.9958</td><td class="num"><div class="cell-bar"><span>0.8951</span><div class="mini-track"><div class="mini-fill" style="width:89.50922720805283%"></div></div></div></td></tr><tr><td>Random Forest</td><td>PhiUSIIL main</td><td>Combined held-out test</td><td class="num">78,982</td><td class="num">0.8747</td><td class="num">0.8125</td><td class="num">0.9959</td><td class="num"><div class="cell-bar"><span>0.8949</span><div class="mini-track"><div class="mini-fill" style="width:89.49301515859199%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>PhiUSIIL main</td><td>Combined held-out test</td><td class="num">78,982</td><td class="num">0.8746</td><td class="num">0.8125</td><td class="num">0.9959</td><td class="num"><div class="cell-bar"><span>0.8949</span><div class="mini-track"><div class="mini-fill" style="width:89.48971901107183%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>PhiUSIIL main</td><td>Combined held-out test</td><td class="num">78,982</td><td class="num">0.8729</td><td class="num">0.8123</td><td class="num">0.9920</td><td class="num"><div class="cell-bar"><span>0.8932</span><div class="mini-track"><div class="mini-fill" style="width:89.32051227502872%"></div></div></div></td></tr><tr><td>Random Forest</td><td>LegitPhish</td><td>Combined held-out test</td><td class="num">78,876</td><td class="num">0.8639</td><td class="num">0.8101</td><td class="num">0.9732</td><td class="num"><div class="cell-bar"><span>0.8842</span><div class="mini-track"><div class="mini-fill" style="width:88.41959942621094%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>LegitPhish</td><td>Combined held-out test</td><td class="num">78,876</td><td class="num">0.8483</td><td class="num">0.8055</td><td class="num">0.9439</td><td class="num"><div class="cell-bar"><span>0.8692</span><div class="mini-track"><div class="mini-fill" style="width:86.92306010451057%"></div></div></div></td></tr><tr><td>XGBoost</td><td>LegitPhish</td><td>Combined held-out test</td><td class="num">78,876</td><td class="num">0.8378</td><td class="num">0.8021</td><td class="num">0.9245</td><td class="num"><div class="cell-bar"><span>0.8589</span><div class="mini-track"><div class="mini-fill" style="width:85.89265623965939%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>LegitPhish</td><td>Combined held-out test</td><td class="num">78,876</td><td class="num">0.7970</td><td class="num">0.7881</td><td class="num">0.8478</td><td class="num"><div class="cell-bar"><span>0.8169</span><div class="mini-track"><div class="mini-fill" style="width:81.68736988996407%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>LegitPhish</td><td>Combined held-out test</td><td class="num">78,876</td><td class="num">0.7795</td><td class="num">0.7814</td><td class="num">0.8151</td><td class="num"><div class="cell-bar"><span>0.7979</span><div class="mini-track"><div class="mini-fill" style="width:79.78664063589459%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>PhishStorm</td><td>Combined held-out test</td><td class="num">84,759</td><td class="num">0.7699</td><td class="num">0.7970</td><td class="num">0.7202</td><td class="num"><div class="cell-bar"><span>0.7567</span><div class="mini-track"><div class="mini-fill" style="width:75.67021369493894%"></div></div></div></td></tr><tr><td>XGBoost</td><td>PhishStorm</td><td>Combined held-out test</td><td class="num">84,759</td><td class="num">0.7136</td><td class="num">0.6577</td><td class="num">0.8832</td><td class="num"><div class="cell-bar"><span>0.7540</span><div class="mini-track"><div class="mini-fill" style="width:75.39531300681155%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>PhishStorm</td><td>Combined held-out test</td><td class="num">84,759</td><td class="num">0.7707</td><td class="num">0.8100</td><td class="num">0.7034</td><td class="num"><div class="cell-bar"><span>0.7529</span><div class="mini-track"><div class="mini-fill" style="width:75.29265223635878%"></div></div></div></td></tr><tr><td>Random Forest</td><td>PhishStorm</td><td>Combined held-out test</td><td class="num">84,759</td><td class="num">0.5963</td><td class="num">0.5572</td><td class="num">0.9139</td><td class="num"><div class="cell-bar"><span>0.6923</span><div class="mini-track"><div class="mini-fill" style="width:69.22765580449897%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>PhishStorm</td><td>Combined held-out test</td><td class="num">84,759</td><td class="num">0.5940</td><td class="num">0.5597</td><td class="num">0.8566</td><td class="num"><div class="cell-bar"><span>0.6770</span><div class="mini-track"><div class="mini-fill" style="width:67.70342562177382%"></div></div></div></td></tr></tbody></table>
+
+</details>
+
+
+<details class="panel">
+<summary>Experiment 2b: Combined-trained models tested against the combined held-out dataset</summary>
+
+<p>Each model is trained on the combined training dataset and tested on the combined held-out test set.</p>
+<div class="cards">
+<article class="card"><span>Best model average</span><strong>XGBoost</strong><p>mean F1 0.9780; worst F1 0.9780</p></article>
+<article class="card"><span>Best exact result</span><strong>XGBoost</strong><p>trained on Combined dataset; tested on Combined held-out test</p></article>
+<article class="card"><span>Best exact F1</span><strong>0.9780 F1</strong></article>
+<article class="card"><span>Rows in section</span><strong>5 rows</strong></article>
+</div>
+<h3>Model Ranking</h3>
+<div class="chart"><div class="bar-row"><span class="bar-label">XGBoost</span><div class="bar-track"><div class="bar-fill" style="width:97.79834154548732%"></div></div><span class="bar-score">0.9780</span></div><div class="bar-row"><span class="bar-label">Random Forest</span><div class="bar-track"><div class="bar-fill" style="width:97.7899823726212%"></div></div><span class="bar-score">0.9779</span></div><div class="bar-row"><span class="bar-label">Decision Tree</span><div class="bar-track"><div class="bar-fill" style="width:97.26205058001295%"></div></div><span class="bar-score">0.9726</span></div><div class="bar-row"><span class="bar-label">Logistic Regression</span><div class="bar-track"><div class="bar-fill" style="width:91.19412277424979%"></div></div><span class="bar-score">0.9119</span></div><div class="bar-row"><span class="bar-label">Linear SVM</span><div class="bar-track"><div class="bar-fill" style="width:90.52319594102428%"></div></div><span class="bar-score">0.9052</span></div></div>
+
+<section class="plain-summary">
+<h4>Plain-English Summary</h4>
+<ul><li>Winner: XGBoost is ranked first because it has the highest F1 in this experiment: 0.9780. F1 is the main score here because it balances catching phishing URLs with avoiding false phishing alarms.</li><li>For this winner, precision is 0.9850, recall is 0.9711, and accuracy is 0.9748. Precision means how trustworthy its phishing warnings are; recall means how many real phishing URLs it catches.</li><li>Runner-up: Random Forest is second with F1 0.9779. The gap from the winner is 0.0001, so the result is almost tied and should be treated as very close.</li><li>The best exact row for the winner is trained on Combined dataset and tested on Combined held-out test, with F1 0.9780.</li><li>Measurement note: precision and recall are fairly balanced, so the F1 score is a reasonable single summary for this section.</li><li>Conclusion: for Experiment 2b, XGBoost gives the strongest current held-out evidence under this training/testing setup.</li></ul>
+</section>
+
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th class="num">Mean F1 <span class="tooltip" tabindex="0" data-tooltip="Average phishing F1 across the rows in this experiment section.">?</span></th><th class="num">Worst F1 <span class="tooltip" tabindex="0" data-tooltip="Lowest phishing F1 for this model in this experiment section.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Evaluations <span class="tooltip" tabindex="0" data-tooltip="Number of trained-model/test-dataset rows used in the average.">?</span></th></tr></thead><tbody><tr><td>XGBoost</td><td class="num">0.9780</td><td class="num">0.9780</td><td class="num">0.9711</td><td class="num">0.9850</td><td class="num">0.9748</td><td class="num">1</td></tr><tr><td>Random Forest</td><td class="num">0.9779</td><td class="num">0.9779</td><td class="num">0.9731</td><td class="num">0.9827</td><td class="num">0.9746</td><td class="num">1</td></tr><tr><td>Decision Tree</td><td class="num">0.9726</td><td class="num">0.9726</td><td class="num">0.9665</td><td class="num">0.9789</td><td class="num">0.9686</td><td class="num">1</td></tr><tr><td>Logistic Regression</td><td class="num">0.9119</td><td class="num">0.9119</td><td class="num">0.8739</td><td class="num">0.9534</td><td class="num">0.9027</td><td class="num">1</td></tr><tr><td>Linear SVM</td><td class="num">0.9052</td><td class="num">0.9052</td><td class="num">0.8601</td><td class="num">0.9554</td><td class="num">0.8962</td><td class="num">1</td></tr></tbody></table>
+<h3>Exact Held-Out Results</h3>
+<table><thead><tr><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Tested On <span class="tooltip" tabindex="0" data-tooltip="The held-out dataset used to judge predictions.">?</span></th><th class="num">Rows <span class="tooltip" tabindex="0" data-tooltip="Number of URL rows scored in this test.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">Precision <span class="tooltip" tabindex="0" data-tooltip="When the model predicts phishing, how often that prediction is correct.">?</span></th><th class="num">Recall <span class="tooltip" tabindex="0" data-tooltip="How many real phishing URLs the model catches.">?</span></th><th class="num">F1 <span class="tooltip" tabindex="0" data-tooltip="A balanced score combining phishing precision and phishing recall.">?</span></th></tr></thead><tbody><tr><td>XGBoost</td><td>Combined dataset</td><td>Combined held-out test</td><td class="num">72,667</td><td class="num">0.9748</td><td class="num">0.9850</td><td class="num">0.9711</td><td class="num"><div class="cell-bar"><span>0.9780</span><div class="mini-track"><div class="mini-fill" style="width:97.79834154548732%"></div></div></div></td></tr><tr><td>Random Forest</td><td>Combined dataset</td><td>Combined held-out test</td><td class="num">72,667</td><td class="num">0.9746</td><td class="num">0.9827</td><td class="num">0.9731</td><td class="num"><div class="cell-bar"><span>0.9779</span><div class="mini-track"><div class="mini-fill" style="width:97.7899823726212%"></div></div></div></td></tr><tr><td>Decision Tree</td><td>Combined dataset</td><td>Combined held-out test</td><td class="num">72,667</td><td class="num">0.9686</td><td class="num">0.9789</td><td class="num">0.9665</td><td class="num"><div class="cell-bar"><span>0.9726</span><div class="mini-track"><div class="mini-fill" style="width:97.26205058001295%"></div></div></div></td></tr><tr><td>Logistic Regression</td><td>Combined dataset</td><td>Combined held-out test</td><td class="num">72,667</td><td class="num">0.9027</td><td class="num">0.9534</td><td class="num">0.8739</td><td class="num"><div class="cell-bar"><span>0.9119</span><div class="mini-track"><div class="mini-fill" style="width:91.19412277424979%"></div></div></div></td></tr><tr><td>Linear SVM</td><td>Combined dataset</td><td>Combined held-out test</td><td class="num">72,667</td><td class="num">0.8962</td><td class="num">0.9554</td><td class="num">0.8601</td><td class="num"><div class="cell-bar"><span>0.9052</span><div class="mini-track"><div class="mini-fill" style="width:90.52319594102428%"></div></div></div></td></tr></tbody></table>
+
+</details>
+
+
+<details class="panel">
+<summary>Experiment 3: 40-URL real-world sanity probe</summary>
+
+<p>Saved models are tested on 20 normal websites and 20 held-out phishing URLs to inspect false positives and missed phishing.</p>
+<div class="cards">
+<article class="card"><span>Best practical model</span><strong>Logistic Regression</strong><p>trained on LegitPhish</p></article>
+<article class="card"><span>Correct answers</span><strong>40 of 40</strong></article>
+<article class="card"><span>False positives</span><strong>0 legit URLs</strong></article>
+<article class="card"><span>Missed phishing</span><strong>0 URLs</strong></article>
+</div>
+<section class="plain-summary">
+<h4>Plain-English Summary</h4>
+<ul>
+<li>Winner: Logistic Regression trained on LegitPhish is first because it scored 40/40 with 0 legitimate false positives and 0 missed phishing URLs.</li>
+<li>This experiment is practical rather than purely benchmark-style: false positives matter because the web app should not label normal websites as phishing.</li>
+<li>This is the evidence that shifted the practical backend discussion toward Logistic Regression trained on LegitPhish, while keeping XGBoost as the formal benchmark winner.</li>
+</ul>
+</section>
+<table><thead><tr><th class="num">Rank <span class="tooltip" tabindex="0" data-tooltip="Rank">?</span></th><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th class="num">Correct <span class="tooltip" tabindex="0" data-tooltip="Number of URLs classified correctly in the sanity probe.">?</span></th><th class="num">Accuracy <span class="tooltip" tabindex="0" data-tooltip="Overall correctness across phishing and legitimate URLs.">?</span></th><th class="num">F1 <span class="tooltip" tabindex="0" data-tooltip="A balanced score combining phishing precision and phishing recall.">?</span></th><th class="num">False Positives <span class="tooltip" tabindex="0" data-tooltip="Legitimate URLs incorrectly predicted as phishing.">?</span></th><th class="num">Missed Phishing <span class="tooltip" tabindex="0" data-tooltip="Phishing URLs incorrectly predicted as legitimate.">?</span></th><th>Google Slash <span class="tooltip" tabindex="0" data-tooltip="Prediction for https://www.google.com/.">?</span></th><th>OpenAI Research <span class="tooltip" tabindex="0" data-tooltip="Prediction for https://www.openai.com/research.">?</span></th></tr></thead><tbody><tr><td class="num">1</td><td>LegitPhish</td><td>Logistic Regression</td><td class="num">40/40</td><td class="num">1.0000</td><td class="num">1.0000</td><td class="num">0</td><td class="num">0</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">2</td><td>LegitPhish</td><td>Linear SVM</td><td class="num">39/40</td><td class="num">0.9750</td><td class="num">0.9744</td><td class="num">0</td><td class="num">1</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">3</td><td>LegitPhish</td><td>Decision Tree</td><td class="num">38/40</td><td class="num">0.9500</td><td class="num">0.9524</td><td class="num">2</td><td class="num">0</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">4</td><td>LegitPhish</td><td>XGBoost</td><td class="num">38/40</td><td class="num">0.9500</td><td class="num">0.9524</td><td class="num">2</td><td class="num">0</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">5</td><td>Combined dataset</td><td>Logistic Regression</td><td class="num">37/40</td><td class="num">0.9250</td><td class="num">0.9189</td><td class="num">0</td><td class="num">3</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">6</td><td>Combined dataset</td><td>Linear SVM</td><td class="num">36/40</td><td class="num">0.9000</td><td class="num">0.8889</td><td class="num">0</td><td class="num">4</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">7</td><td>LegitPhish</td><td>Random Forest</td><td class="num">36/40</td><td class="num">0.9000</td><td class="num">0.9091</td><td class="num">4</td><td class="num">0</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">8</td><td>PhishStorm</td><td>Logistic Regression</td><td class="num">35/40</td><td class="num">0.8750</td><td class="num">0.8571</td><td class="num">0</td><td class="num">5</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">9</td><td>PhishStorm</td><td>Linear SVM</td><td class="num">33/40</td><td class="num">0.8250</td><td class="num">0.7879</td><td class="num">0</td><td class="num">7</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">10</td><td>PhishStorm</td><td>XGBoost</td><td class="num">27/40</td><td class="num">0.6750</td><td class="num">0.6977</td><td class="num">8</td><td class="num">5</td><td>legitimate</td><td>legitimate</td></tr><tr><td class="num">11</td><td>PhishStorm</td><td>Decision Tree</td><td class="num">23/40</td><td class="num">0.5750</td><td class="num">0.6667</td><td class="num">14</td><td class="num">3</td><td>phishing</td><td>legitimate</td></tr><tr><td class="num">12</td><td>PhishStorm</td><td>Random Forest</td><td class="num">22/40</td><td class="num">0.5500</td><td class="num">0.6538</td><td class="num">15</td><td class="num">3</td><td>phishing</td><td>legitimate</td></tr><tr><td class="num">13</td><td>Main Baseline Phiusiil</td><td>Decision Tree</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">14</td><td>Main Baseline Phiusiil</td><td>Logistic Regression</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">15</td><td>Main Baseline Phiusiil</td><td>Random Forest</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">16</td><td>Main Baseline Phiusiil</td><td>XGBoost</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">17</td><td>PhiUSIIL main</td><td>Decision Tree</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">18</td><td>PhiUSIIL main</td><td>Logistic Regression</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">19</td><td>PhiUSIIL main</td><td>Random Forest</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">20</td><td>PhiUSIIL main</td><td>XGBoost</td><td class="num">21/40</td><td class="num">0.5250</td><td class="num">0.6780</td><td class="num">19</td><td class="num">0</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">21</td><td>Combined dataset</td><td>Decision Tree</td><td class="num">20/40</td><td class="num">0.5000</td><td class="num">0.6429</td><td class="num">18</td><td class="num">2</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">22</td><td>Combined dataset</td><td>Random Forest</td><td class="num">20/40</td><td class="num">0.5000</td><td class="num">0.6429</td><td class="num">18</td><td class="num">2</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">23</td><td>Main Baseline Phiusiil</td><td>Linear SVM</td><td class="num">20/40</td><td class="num">0.5000</td><td class="num">0.6552</td><td class="num">19</td><td class="num">1</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">24</td><td>PhiUSIIL main</td><td>Linear SVM</td><td class="num">20/40</td><td class="num">0.5000</td><td class="num">0.6552</td><td class="num">19</td><td class="num">1</td><td>phishing</td><td>phishing</td></tr><tr><td class="num">25</td><td>Combined dataset</td><td>XGBoost</td><td class="num">19/40</td><td class="num">0.4750</td><td class="num">0.6182</td><td class="num">18</td><td class="num">3</td><td>phishing</td><td>phishing</td></tr></tbody></table>
+
+</details>
+
+
+<details class="panel">
+<summary>Experiment 4: Google trailing-slash brittleness check</summary>
+
+<p>Checks whether a small harmless URL text change can flip the model&#x27;s prediction for an obvious legitimate website.</p>
+<div class="cards">
+<article class="card"><span>Highlighted finding</span><strong>Combined XGBoost</strong><p>XGBoost trained on Combined dataset predicted no-slash as legitimate and slash as phishing.</p></article>
+<article class="card"><span>No slash URL</span><strong>https://www.google.com</strong><p>Expected class: legitimate.</p></article>
+<article class="card"><span>With slash URL</span><strong>https://www.google.com/</strong><p>Expected class: legitimate.</p></article>
+</div>
+<h3>Only These URL Features Changed</h3>
+<table class="compact-table"><thead><tr><th>Feature <span class="tooltip" tabindex="0" data-tooltip="Feature">?</span></th><th class="num">No slash <span class="tooltip" tabindex="0" data-tooltip="No slash">?</span></th><th class="num">With slash <span class="tooltip" tabindex="0" data-tooltip="With slash">?</span></th></tr></thead><tbody><tr><td>url_length</td><td class="num">22</td><td class="num">23</td></tr><tr><td>path_length</td><td class="num">0</td><td class="num">1</td></tr><tr><td>special_char_count</td><td class="num">3</td><td class="num">4</td></tr></tbody></table>
+<section class="plain-summary">
+<h4>Plain-English Summary</h4>
+<ul>
+<li>A trailing slash should not normally make Google look like phishing.</li>
+<li>The combined-dataset XGBoost model flipping this prediction is evidence of lexical brittleness.</li>
+<li>This supports the dissertation limitation: URL-only lexical features can be useful, but they are not enough for production-grade reliability by themselves.</li>
+</ul>
+</section>
+<table><thead><tr><th>Trained On <span class="tooltip" tabindex="0" data-tooltip="The dataset used to teach the model before testing.">?</span></th><th>Model <span class="tooltip" tabindex="0" data-tooltip="The machine-learning algorithm being compared.">?</span></th><th>Google No Slash <span class="tooltip" tabindex="0" data-tooltip="Prediction for https://www.google.com.">?</span></th><th>Google Slash <span class="tooltip" tabindex="0" data-tooltip="Prediction for https://www.google.com/.">?</span></th><th>OpenAI Research <span class="tooltip" tabindex="0" data-tooltip="Prediction for https://www.openai.com/research.">?</span></th><th>Prediction Changed <span class="tooltip" tabindex="0" data-tooltip="Prediction Changed">?</span></th><th class="num">False Positives <span class="tooltip" tabindex="0" data-tooltip="Legitimate URLs incorrectly predicted as phishing.">?</span></th></tr></thead><tbody><tr><td>LegitPhish</td><td>Logistic Regression</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>LegitPhish</td><td>Linear SVM</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>LegitPhish</td><td>Decision Tree</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>LegitPhish</td><td>XGBoost</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>Combined dataset</td><td>Logistic Regression</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>Combined dataset</td><td>Linear SVM</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>LegitPhish</td><td>Random Forest</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>PhishStorm</td><td>Logistic Regression</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>PhishStorm</td><td>Linear SVM</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>PhishStorm</td><td>XGBoost</td><td>legitimate</td><td>legitimate</td><td>legitimate</td><td>No</td><td class="num">0</td></tr><tr><td>PhishStorm</td><td>Decision Tree</td><td>phishing</td><td>phishing</td><td>legitimate</td><td>No</td><td class="num">2</td></tr><tr><td>PhishStorm</td><td>Random Forest</td><td>phishing</td><td>phishing</td><td>legitimate</td><td>No</td><td class="num">2</td></tr><tr><td>Main Baseline Phiusiil</td><td>Decision Tree</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>Main Baseline Phiusiil</td><td>Logistic Regression</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>Main Baseline Phiusiil</td><td>Random Forest</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>Main Baseline Phiusiil</td><td>XGBoost</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>PhiUSIIL main</td><td>Decision Tree</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>PhiUSIIL main</td><td>Logistic Regression</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>PhiUSIIL main</td><td>Random Forest</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>PhiUSIIL main</td><td>XGBoost</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>Combined dataset</td><td>Decision Tree</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>Combined dataset</td><td>Random Forest</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>Main Baseline Phiusiil</td><td>Linear SVM</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>PhiUSIIL main</td><td>Linear SVM</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr><tr><td>Combined dataset</td><td>XGBoost</td><td>legitimate</td><td>phishing</td><td>phishing</td><td>Yes</td><td class="num">1</td></tr></tbody></table>
+
+</details>
+
+
+<details class="panel">
+<summary>Source Files Used</summary>
+<ul><li><code>machine_learning/experiments/1a_train_on_main_test_on_main/test_summary.csv</code></li><li><code>machine_learning/experiments/1a_train_on_main_test_on_main/confusion_matrices.json</code></li><li><code>machine_learning/experiments/1b_train_on_main_test_on_others/test_summary.csv</code></li><li><code>machine_learning/experiments/1c_train_on_other_datasets_test_on_other_datasets/test_summary.csv</code></li><li><code>machine_learning/experiments/3_real_world_sanity_probe/40_url_balanced_model_probe_urls.csv</code></li><li><code>machine_learning/experiments/3_real_world_sanity_probe/40_url_balanced_model_probe_summary.csv</code></li><li><code>machine_learning/experiments/3_real_world_sanity_probe/40_url_balanced_model_probe_predictions.csv</code></li></ul>
+</details>
+
+</main>
+</body>
+</html>

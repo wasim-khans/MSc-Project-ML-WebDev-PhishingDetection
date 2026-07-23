@@ -1,0 +1,238 @@
+{
+  "random_state": 42,
+  "test_size": 0.2,
+  "run_config": "machine_learning/configs/cross_dataset_config.json",
+  "feature_columns": [
+    "url_length",
+    "domain_length",
+    "path_length",
+    "dot_count",
+    "hyphen_count",
+    "digit_count",
+    "special_char_count",
+    "has_https",
+    "has_ip_address",
+    "has_at_symbol",
+    "subdomain_count",
+    "query_param_count",
+    "suspicious_word_count",
+    "tld_length",
+    "has_url_shortener"
+  ],
+  "label_mapping": {
+    "0": "phishing",
+    "1": "legitimate"
+  },
+  "models": [
+    {
+      "training_scenario": "phiusiil_main",
+      "model": "Logistic Regression",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phiusiil_main_80_20.joblib",
+      "train_rows": 188296,
+      "source_datasets": [
+        "main"
+      ],
+      "train_seconds": 0.13027608301490545
+    },
+    {
+      "training_scenario": "phiusiil_main",
+      "model": "Decision Tree",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phiusiil_main_80_20.joblib",
+      "train_rows": 188296,
+      "source_datasets": [
+        "main"
+      ],
+      "train_seconds": 0.09251562494318932
+    },
+    {
+      "training_scenario": "phiusiil_main",
+      "model": "Random Forest",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phiusiil_main_80_20.joblib",
+      "train_rows": 188296,
+      "source_datasets": [
+        "main"
+      ],
+      "train_seconds": 0.7507656669477001
+    },
+    {
+      "training_scenario": "phiusiil_main",
+      "model": "Linear SVM",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phiusiil_main_80_20.joblib",
+      "train_rows": 188296,
+      "source_datasets": [
+        "main"
+      ],
+      "train_seconds": 0.34132574999239296
+    },
+    {
+      "training_scenario": "phiusiil_main",
+      "model": "XGBoost",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phiusiil_main_80_20.joblib",
+      "train_rows": 188296,
+      "source_datasets": [
+        "main"
+      ],
+      "train_seconds": 0.5748812910169363
+    },
+    {
+      "training_scenario": "legitphish",
+      "model": "Logistic Regression",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_legitphish_80_20.joblib",
+      "train_rows": 80697,
+      "source_datasets": [
+        "legitphish"
+      ],
+      "train_seconds": 0.0368769170017913
+    },
+    {
+      "training_scenario": "legitphish",
+      "model": "Decision Tree",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_legitphish_80_20.joblib",
+      "train_rows": 80697,
+      "source_datasets": [
+        "legitphish"
+      ],
+      "train_seconds": 0.027634500060230494
+    },
+    {
+      "training_scenario": "legitphish",
+      "model": "Random Forest",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_legitphish_80_20.joblib",
+      "train_rows": 80697,
+      "source_datasets": [
+        "legitphish"
+      ],
+      "train_seconds": 0.2413802909431979
+    },
+    {
+      "training_scenario": "legitphish",
+      "model": "Linear SVM",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_legitphish_80_20.joblib",
+      "train_rows": 80697,
+      "source_datasets": [
+        "legitphish"
+      ],
+      "train_seconds": 0.0437066670274362
+    },
+    {
+      "training_scenario": "legitphish",
+      "model": "XGBoost",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib",
+      "train_rows": 80697,
+      "source_datasets": [
+        "legitphish"
+      ],
+      "train_seconds": 0.49804908398073167
+    },
+    {
+      "training_scenario": "phishstorm",
+      "model": "Logistic Regression",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phishstorm_80_20.joblib",
+      "train_rows": 76728,
+      "source_datasets": [
+        "phishstorm"
+      ],
+      "train_seconds": 0.04768095794133842
+    },
+    {
+      "training_scenario": "phishstorm",
+      "model": "Decision Tree",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phishstorm_80_20.joblib",
+      "train_rows": 76728,
+      "source_datasets": [
+        "phishstorm"
+      ],
+      "train_seconds": 0.13204029202461243
+    },
+    {
+      "training_scenario": "phishstorm",
+      "model": "Random Forest",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phishstorm_80_20.joblib",
+      "train_rows": 76728,
+      "source_datasets": [
+        "phishstorm"
+      ],
+      "train_seconds": 0.4023249589372426
+    },
+    {
+      "training_scenario": "phishstorm",
+      "model": "Linear SVM",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phishstorm_80_20.joblib",
+      "train_rows": 76728,
+      "source_datasets": [
+        "phishstorm"
+      ],
+      "train_seconds": 0.053589124931022525
+    },
+    {
+      "training_scenario": "phishstorm",
+      "model": "XGBoost",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phishstorm_80_20.joblib",
+      "train_rows": 76728,
+      "source_datasets": [
+        "phishstorm"
+      ],
+      "train_seconds": 0.5263378749368712
+    },
+    {
+      "training_scenario": "combined_dataset",
+      "model": "Logistic Regression",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_combined_dataset_80_20.joblib",
+      "train_rows": 321251,
+      "source_datasets": [
+        "main",
+        "legitphish",
+        "phishstorm"
+      ],
+      "train_seconds": 0.18078920897096395
+    },
+    {
+      "training_scenario": "combined_dataset",
+      "model": "Decision Tree",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_combined_dataset_80_20.joblib",
+      "train_rows": 321251,
+      "source_datasets": [
+        "main",
+        "legitphish",
+        "phishstorm"
+      ],
+      "train_seconds": 0.36926933308131993
+    },
+    {
+      "training_scenario": "combined_dataset",
+      "model": "Random Forest",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib",
+      "train_rows": 321251,
+      "source_datasets": [
+        "main",
+        "legitphish",
+        "phishstorm"
+      ],
+      "train_seconds": 1.5129354579839855
+    },
+    {
+      "training_scenario": "combined_dataset",
+      "model": "Linear SVM",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_combined_dataset_80_20.joblib",
+      "train_rows": 321251,
+      "source_datasets": [
+        "main",
+        "legitphish",
+        "phishstorm"
+      ],
+      "train_seconds": 0.5860932079376653
+    },
+    {
+      "training_scenario": "combined_dataset",
+      "model": "XGBoost",
+      "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib",
+      "train_rows": 321251,
+      "source_datasets": [
+        "main",
+        "legitphish",
+        "phishstorm"
+      ],
+      "train_seconds": 0.6762830830411986
+    }
+  ]
+}

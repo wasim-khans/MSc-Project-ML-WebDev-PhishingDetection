@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Experiment 2: Cross-Dataset Generalisation Report</title>
+<style>
+:root {
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --background: #f6f7f9;
+  --line: #d6dbe3;
+  --muted: #5f6b7a;
+  --surface: #ffffff;
+  --surface-soft: #f9fafb;
+  --text: #17202a;
+  --success: #047857;
+  --warning: #a16207;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+main {
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 28px 22px 56px;
+}
+header {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+  padding: 10px 0 22px;
+}
+h1, h2, h3 {
+  letter-spacing: 0;
+  margin: 0;
+}
+h1 {
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: 1.05;
+  max-width: 860px;
+}
+.lede {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.55;
+  margin: 12px 0 0;
+  max-width: 820px;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 16px 0;
+  padding: 18px;
+}
+.panel > h2,
+.section-heading h2 {
+  font-size: 21px;
+}
+.section-heading {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+.section-note,
+.panel p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+table {
+  border-collapse: collapse;
+  margin-top: 12px;
+  width: 100%;
+}
+th, td {
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  padding: 10px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  color: #334155;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+th.num, td.num {
+  text-align: right;
+}
+code {
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+.metric-grid,
+.guide-grid,
+.headline-grid,
+.decision-grid,
+.answer-grid,
+.concept-grid,
+.comparison-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.metric-card,
+.guide-card,
+.headline-card,
+.decision-card {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+.metric-card span {
+  color: var(--muted);
+  display: block;
+  font-size: 13px;
+}
+.metric-card strong {
+  display: block;
+  font-size: 20px;
+  margin-top: 4px;
+}
+.guide-card h3,
+.headline-card h3 {
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+.headline-card span,
+.headline-card small {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+}
+.headline-card strong {
+  display: block;
+  font-size: 24px;
+  margin-top: 6px;
+}
+.headline-card .score {
+  color: var(--success);
+  font-weight: 700;
+  margin: 8px 0;
+}
+.decision-card > span,
+.decision-card > small {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+}
+.decision-card strong {
+  display: block;
+  font-size: 21px;
+  margin-top: 6px;
+}
+.decision-card .score {
+  color: var(--success);
+  font-weight: 700;
+  margin: 8px 0;
+}
+.decision-explainer {
+  background: var(--accent-soft);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  margin-top: 14px;
+  padding: 14px;
+}
+.decision-explainer h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.decision-explainer p {
+  color: #1e3a8a;
+  margin: 8px 0 0;
+}
+.controls {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  margin-top: 14px;
+}
+.controls label {
+  color: #334155;
+  display: grid;
+  font-size: 12px;
+  font-weight: 700;
+  gap: 6px;
+  text-transform: uppercase;
+}
+select,
+button {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  min-height: 38px;
+}
+select {
+  background: #fff;
+  padding: 0 10px;
+}
+button {
+  background: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0 12px;
+}
+button:hover,
+button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.view-summary {
+  background: var(--accent-soft);
+  border-radius: 6px;
+  color: #1e3a8a;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 10px;
+  text-align: right;
+}
+.winner {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 999px;
+  color: #78350f;
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 6px;
+  padding: 1px 7px;
+}
+.hint {
+  background: var(--accent-soft);
+  border-radius: 999px;
+  color: var(--accent);
+  display: inline-grid;
+  font-size: 10px;
+  height: 16px;
+  place-items: center;
+  width: 16px;
+}
+.tooltip,
+[data-tooltip] {
+  cursor: help;
+  display: inline-flex;
+  gap: 4px;
+  position: relative;
+}
+.tooltip-text {
+  background: #111827;
+  border-radius: 6px;
+  bottom: calc(100% + 8px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
+  color: #fff;
+  display: none;
+  font-size: 12px;
+  font-weight: 500;
+  left: 0;
+  line-height: 1.4;
+  max-width: min(280px, 80vw);
+  opacity: 0;
+  padding: 8px 10px;
+  pointer-events: none;
+  position: absolute;
+  text-transform: none;
+  transform: translateY(4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  visibility: hidden;
+  width: max-content;
+  z-index: 20;
+}
+.tooltip:hover .tooltip-text,
+.tooltip:focus .tooltip-text,
+.tooltip:focus-within .tooltip-text {
+  opacity: 1;
+  display: block;
+  transform: translateY(0);
+  visibility: visible;
+}
+.score-cell {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 58px minmax(90px, 1fr);
+  min-width: 160px;
+}
+.track {
+  background: #e5e7eb;
+  border-radius: 999px;
+  min-width: 90px;
+}
+.bar {
+  background: var(--accent);
+  border-radius: 999px;
+  height: 12px;
+}
+.matrix-table td {
+  background:
+    linear-gradient(90deg, rgba(37, 99, 235, 0.16) var(--heat), transparent var(--heat));
+  min-width: 140px;
+}
+.matrix-table td strong,
+.matrix-table td span {
+  display: block;
+}
+.matrix-table td span {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+.model-block {
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 18px;
+}
+.model-block:first-of-type {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+.model-block h3,
+.comparison-grid h3 {
+  font-size: 17px;
+}
+.matrix-scroll {
+  overflow-x: auto;
+}
+.model-matrix {
+  min-width: 760px;
+}
+.model-matrix th,
+.model-matrix td {
+  min-width: 150px;
+}
+.matrix-score-cell strong,
+.matrix-score-cell span,
+.matrix-score-cell small {
+  display: block;
+}
+.matrix-score-cell strong {
+  color: var(--success);
+  font-size: 15px;
+}
+.matrix-score-cell span {
+  color: var(--text);
+  font-size: 12px;
+  margin-top: 3px;
+}
+.matrix-score-cell small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  margin-top: 6px;
+}
+.diagnostic-pill {
+  background: #fef3c7;
+  border-radius: 999px;
+  color: #78350f;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+  padding: 1px 6px;
+  text-transform: none;
+}
+.plain-guide-table td:nth-child(2),
+.plain-guide-table td:nth-child(3) {
+  color: var(--muted);
+  line-height: 1.45;
+}
+#modelSummaryView,
+#scenarioView,
+#rankingView,
+#matrixView,
+#detailView {
+  overflow-x: auto;
+}
+.muted-cell {
+  color: var(--muted);
+}
+.empty {
+  background: var(--surface-soft);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+details {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 0;
+}
+summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.report-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 14px 0;
+  padding: 0;
+}
+.report-section > summary {
+  font-size: 18px;
+  list-style-position: inside;
+  padding: 16px 18px;
+}
+.report-section[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+.report-section-body {
+  padding: 16px 18px 18px;
+}
+.answer-grid article {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+.answer-grid h3 {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.look-for {
+  background: var(--accent-soft);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+}
+.look-for h3 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+.look-for ul {
+  color: #1e3a8a;
+  margin: 0;
+  padding-left: 18px;
+}
+.look-for li {
+  line-height: 1.45;
+  margin: 4px 0;
+}
+@media (max-width: 760px) {
+  main {
+    padding: 18px 12px 40px;
+  }
+  .section-heading {
+    display: block;
+  }
+  .view-summary {
+    margin-top: 10px;
+    text-align: left;
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Experiment 2: Cross-Dataset Generalisation Report</h1>
+<p class="lede">Cross-Dataset Training Matrix for phishing URL model training and testing, generated 2026-07-12 02:01.</p>
+</header>
+
+<section class="panel" id="decision-dashboard">
+<div class="section-heading">
+<div>
+<h2>Decision Dashboard</h2>
+<p class="section-note">Generated from the current <code>test_summary.csv</code>. These cards answer the questions needed for the dissertation and backend choice.</p>
+</div>
+<div class="view-summary">Generated 2026-07-12 02:01</div>
+</div>
+<div class="decision-grid"><article class="decision-card"><span>Backend Recommendation</span><strong>XGBoost</strong><p>trained on combined_dataset</p><div class="score">Mean clean F1: 0.9712</div><small><span class="tooltip" tabindex="0">Why? <span class="hint">?</span><span class="tooltip-text" role="tooltip">combined_dataset / XGBoost has the strongest clean-holdout all-round score using mean phishing F1, worst phishing F1, and phishing recall as tie-breakers. This is the most defensible backend choice because it is judged across multiple clean test datasets rather than one same-source split only.</span></span></small></article>
+<article class="decision-card"><span>Best All-Rounder</span><strong>XGBoost</strong><p>combined_dataset across clean holdouts</p><div class="score">Worst clean F1: 0.9144</div><small><span class="tooltip" tabindex="0">Why? <span class="hint">?</span><span class="tooltip-text" role="tooltip">Ranked by mean phishing F1 first, then worst-case F1 and phishing recall.</span></span></small></article>
+<article class="decision-card"><span>Best Single-Source on Combined Test</span><strong>Linear SVM</strong><p>trained on phiusiil_main</p><div class="score">Phishing F1: 0.9070</div><small><span class="tooltip" tabindex="0">Why? <span class="hint">?</span><span class="tooltip-text" role="tooltip">This answers: if only one dataset is used for training, which model does best on the mixed combined test set?</span></span></small></article>
+<article class="decision-card"><span>Best Overall on Combined Test</span><strong>XGBoost</strong><p>trained on combined_dataset</p><div class="score">Phishing F1: 0.9780</div><small><span class="tooltip" tabindex="0">Why? <span class="hint">?</span><span class="tooltip-text" role="tooltip">This allows the single-source winner to be compared against combined training.</span></span></small></article>
+<article class="decision-card"><span>Best Training Dataset</span><strong>combined_dataset</strong><p>best model: Random Forest</p><div class="score">Mean clean F1: 0.9411</div><small><span class="tooltip" tabindex="0">Why? <span class="hint">?</span><span class="tooltip-text" role="tooltip">This ranks the training scenario itself, independent of only one headline test result.</span></span></small></article></div>
+
+<div class="decision-explainer">
+<h3>Why the backend recommendation is not the single-source winner</h3>
+<p>
+Linear SVM trained on PhiUSIIL answers a narrower question:
+which model performs best when training is limited to one dataset and testing is
+done on the mixed combined test set. It scored phishing F1
+0.9070 for that question.
+</p>
+<p>
+XGBoost trained on the Combined Dataset is recommended for the backend
+because it is judged across clean holdout tests, not just one single-source
+comparison. The combined training scenario gives the model more diverse training rows
+from PhiUSIIL, LegitPhish, and PhishStorm, so it learns URL patterns from multiple
+sources instead of one dataset's habits. Its mean clean-holdout F1 is
+0.9712 and its worst clean-holdout F1 is
+0.9144. On the Combined Test, the best combined-training result is XGBoost with Combined Test F1 0.9780, which is 0.0710 higher than the best single-source result.
+</p>
+</div>
+
+</section>
+
+<section class="panel" id="filter-results">
+<h2>Filter Results</h2>
+<p class="section-note">Default view: clean holdout only, all training scenarios, all test datasets, all models, sorted by phishing F1.</p>
+<div class="controls">
+<label>Scope<select id="scopeFilter"></select></label>
+<label>Training<select id="trainingFilter"></select></label>
+<label>Tested On<select id="testedFilter"></select></label>
+<label>Model<select id="modelFilter"></select></label>
+<label>Sort By<select id="sortMetric"></select></label>
+<button type="button" id="resetFilters">Reset</button>
+</div>
+<div class="preset-row">
+<button type="button" data-preset="clean">Clean Holdout Overview</button>
+<button type="button" data-preset="backend">Backend Decision</button>
+<button type="button" data-preset="allrounder">All-Rounder</button>
+<button type="button" data-preset="singleSourceCombined">Single-Source on Combined Test</button>
+<button type="button" data-preset="combined">Combined Test</button>
+<button type="button" data-preset="main">Main Test</button>
+<button type="button" data-preset="external">External Tests</button>
+<button type="button" data-preset="diagnostic">Complete Diagnostic</button>
+</div>
+</section>
+
+<details class="report-section" id="how-to-read-section" open>
+<summary>How to Read This Report</summary>
+<div class="report-section-body">
+
+<div class="concept-grid">
+<article class="guide-card">
+<h3>Rows and Columns</h3>
+<p>Rows in each model matrix are training scenarios: the dataset used to teach the model.</p>
+<p>Columns are test scenarios: the dataset used to judge the trained model.</p>
+</article>
+<article class="guide-card">
+<h3>Cell Values</h3>
+<p>Each cell shows the phishing F1 score first because it balances catching phishing URLs with avoiding false alarms.</p>
+<p><strong>Rows Tested</strong> is the number of URL records scored after any overlap removal.</p>
+</article>
+<article class="guide-card">
+<h3>Training Scenarios</h3>
+<p><strong>Single-source training</strong> means the model learned from one dataset only, such as PhiUSIIL or PhishStorm.</p>
+<p><strong>Combined training</strong> means the model learned from the combined training split made from all usable datasets.</p>
+</article>
+<article class="guide-card">
+<h3>Fairness Notes</h3>
+<p><strong>URL Overlap Removed</strong> counts URLs removed from a test before scoring because the same normalized URL appeared in that model's training data.</p>
+<p>The complete combined dataset is diagnostic because it includes training rows; use clean holdout results for model selection.</p>
+</article>
+</div>
+<table class="plain-guide-table">
+<thead><tr><th>Measurement</th><th>Meaning</th><th>Simple Example</th></tr></thead>
+<tbody>
+<tr><td>Accuracy</td><td>Overall correctness across phishing and legitimate URLs.</td><td>90 correct predictions out of 100 URLs gives accuracy 0.9000.</td></tr>
+<tr><td>Phishing Precision</td><td>When the model predicts phishing, how often it is correct.</td><td>If 80 predicted-phishing URLs are truly phishing out of 100 predicted phishing, precision is 0.8000.</td></tr>
+<tr><td>Phishing Recall</td><td>How many real phishing URLs the model catches.</td><td>If it catches 95 out of 100 real phishing URLs, recall is 0.9500.</td></tr>
+<tr><td>Phishing F1</td><td>A balanced score combining phishing precision and phishing recall.</td><td>High F1 means the model catches phishing without creating too many false alarms.</td></tr>
+</tbody>
+</table>
+
+</div>
+</details>
+
+<details class="report-section" id="research-questions" open>
+<summary>Research Questions Answered</summary>
+<div class="report-section-body">
+
+<section class="look-for">
+<h3>What to Look For</h3>
+<ul>
+<li>Use the decision cards for the headline dissertation answers.</li>
+<li>Use the filters when you want to compare one model, one training dataset, or one test dataset.</li>
+<li>Use clean holdout rows for fair model selection. Treat complete-dataset rows as diagnostic only because they include training rows.</li>
+</ul>
+</section>
+<div class="answer-grid">
+<article>
+<h3>Which model should go into the backend?</h3>
+<p>Use XGBoost trained on combined_dataset. Its mean clean-holdout phishing F1 is 0.9712, with worst clean F1 0.9144. combined_dataset / XGBoost has the strongest clean-holdout all-round score using mean phishing F1, worst phishing F1, and phishing recall as tie-breakers. This is the most defensible backend choice because it is judged across multiple clean test datasets rather than one same-source split only.</p>
+</article>
+<article>
+<h3>Which single-dataset training result is best on the combined test set?</h3>
+<p>The best single-source result on the combined test set is Linear SVM trained on phiusiil_main, with phishing F1 0.9070.</p>
+</article>
+<article>
+<h3>Does combined training help?</h3>
+<p>The best combined-test result is XGBoost trained on combined_dataset, with phishing F1 0.9780. This is 0.0710 higher than the best single-source combined-test result.</p>
+</article>
+<article>
+<h3>Which training dataset is best overall?</h3>
+<p>The strongest training scenario is combined_dataset, with mean clean-holdout phishing F1 0.9411. Its best model in this scenario is Random Forest.</p>
+</article>
+<article>
+<h3>What matters most?</h3>
+<p>The leading all-round model artefact is XGBoost trained on combined_dataset. This supports a dataset-diversity argument: the backend choice should be justified using cross-dataset clean-holdout behaviour, not only the highest score on one same-source split.</p>
+</article>
+</div>
+
+</div>
+</details>
+
+<details class="report-section" id="per-model-results-section" open>
+<summary>Per Model Results</summary>
+<div class="report-section-body">
+<p class="section-note">Read this section model by model. Each matrix keeps the algorithm fixed, then changes what it was trained on and tested against.</p>
+<article class="model-block"><h3>Logistic Regression: Training Scenario vs Test Scenario</h3><p>Simple linear baseline. Useful because it is fast, explainable, and shows whether the URL-only features already separate the classes.</p><div class="matrix-scroll">
+<table class="model-matrix">
+<thead><tr><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhiUSIIL Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">LegitPhish Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhishStorm Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Combined Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Complete Combined Dataset <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span> <span class="diagnostic-pill">Diagnostic</span></th>
+</tr></thead>
+<tbody>
+<tr><th>PhiUSIIL</th>
+<td class="matrix-score-cell"><strong>F1 0.9919</strong><span>Recall 0.9846</span><span>Accuracy 0.9931</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9967</strong><span>Recall 0.9999</span><span>Accuracy 0.9940</span><small>Rows Tested: 14,182 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6648</strong><span>Recall 0.9970</span><span>Accuracy 0.4979</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8932</strong><span>Recall 0.9920</span><span>Accuracy 0.8729</span><small>Rows Tested: 78,982 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8929</strong><span>Recall 0.9923</span><span>Accuracy 0.8727</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>LegitPhish</th>
+<td class="matrix-score-cell"><strong>F1 0.8137</strong><span>Recall 0.6860</span><span>Accuracy 0.8467</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9970</strong><span>Recall 0.9946</span><span>Accuracy 0.9962</span><small>Rows Tested: 20,175 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6602</strong><span>Recall 0.9970</span><span>Accuracy 0.4930</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8169</strong><span>Recall 0.8478</span><span>Accuracy 0.7970</span><small>Rows Tested: 78,876 | URL Overlap Removed: 6,099</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8170</strong><span>Recall 0.8479</span><span>Accuracy 0.7968</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>PhishStorm</th>
+<td class="matrix-score-cell"><strong>F1 0.6008</strong><span>Recall 0.5478</span><span>Accuracy 0.6891</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9224</strong><span>Recall 0.9615</span><span>Accuracy 0.8988</span><small>Rows Tested: 19,959 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8237</strong><span>Recall 0.7683</span><span>Accuracy 0.8358</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7567</strong><span>Recall 0.7202</span><span>Accuracy 0.7699</span><small>Rows Tested: 84,759 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7693</strong><span>Recall 0.7215</span><span>Accuracy 0.7686</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>Combined Dataset</th>
+<td class="matrix-score-cell"><strong>F1 0.9189</strong><span>Recall 0.8549</span><span>Accuracy 0.9264</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9950</strong><span>Recall 0.9937</span><span>Accuracy 0.9910</span><small>Rows Tested: 13,966 | URL Overlap Removed: 6,209</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7826</strong><span>Recall 0.7551</span><span>Accuracy 0.7928</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9119</strong><span>Recall 0.8739</span><span>Accuracy 0.9027</span><small>Rows Tested: 72,667 | URL Overlap Removed: 12,308</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9111</strong><span>Recall 0.8737</span><span>Accuracy 0.9089</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+</tbody>
+</table>
+</div></article>
+<article class="model-block"><h3>Decision Tree: Training Scenario vs Test Scenario</h3><p>Rule-based model. Useful because its splits are easy to understand, but it can overfit one dataset.</p><div class="matrix-scroll">
+<table class="model-matrix">
+<thead><tr><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhiUSIIL Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">LegitPhish Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhishStorm Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Combined Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Complete Combined Dataset <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span> <span class="diagnostic-pill">Diagnostic</span></th>
+</tr></thead>
+<tbody>
+<tr><th>PhiUSIIL</th>
+<td class="matrix-score-cell"><strong>F1 0.9947</strong><span>Recall 0.9913</span><span>Accuracy 0.9955</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9966</strong><span>Recall 1.0000</span><span>Accuracy 0.9939</span><small>Rows Tested: 14,182 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6662</strong><span>Recall 1.0000</span><span>Accuracy 0.4994</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8949</strong><span>Recall 0.9959</span><span>Accuracy 0.8746</span><small>Rows Tested: 78,982 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8947</strong><span>Recall 0.9962</span><span>Accuracy 0.8747</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>LegitPhish</th>
+<td class="matrix-score-cell"><strong>F1 0.9381</strong><span>Recall 0.8834</span><span>Accuracy 0.9431</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9994</strong><span>Recall 0.9994</span><span>Accuracy 0.9993</span><small>Rows Tested: 20,175 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6610</strong><span>Recall 0.9988</span><span>Accuracy 0.4939</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8692</strong><span>Recall 0.9439</span><span>Accuracy 0.8483</span><small>Rows Tested: 78,876 | URL Overlap Removed: 6,099</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8691</strong><span>Recall 0.9435</span><span>Accuracy 0.8480</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>PhishStorm</th>
+<td class="matrix-score-cell"><strong>F1 0.5844</strong><span>Recall 0.8731</span><span>Accuracy 0.4696</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6987</strong><span>Recall 0.8037</span><span>Accuracy 0.5666</span><small>Rows Tested: 19,959 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8964</strong><span>Recall 0.8911</span><span>Accuracy 0.8971</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6770</strong><span>Recall 0.8566</span><span>Accuracy 0.5940</span><small>Rows Tested: 84,759 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7232</strong><span>Recall 0.8722</span><span>Accuracy 0.6430</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>Combined Dataset</th>
+<td class="matrix-score-cell"><strong>F1 0.9926</strong><span>Recall 0.9862</span><span>Accuracy 0.9928</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9982</strong><span>Recall 0.9989</span><span>Accuracy 0.9968</span><small>Rows Tested: 13,966 | URL Overlap Removed: 6,209</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8946</strong><span>Recall 0.8808</span><span>Accuracy 0.8975</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9726</strong><span>Recall 0.9665</span><span>Accuracy 0.9686</span><small>Rows Tested: 72,667 | URL Overlap Removed: 12,308</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9882</strong><span>Recall 0.9823</span><span>Accuracy 0.9875</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+</tbody>
+</table>
+</div></article>
+<article class="model-block"><h3>Random Forest: Training Scenario vs Test Scenario</h3><p>Many decision trees combined. Useful because it is stronger than one tree and handles non-linear feature patterns.</p><div class="matrix-scroll">
+<table class="model-matrix">
+<thead><tr><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhiUSIIL Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">LegitPhish Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhishStorm Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Combined Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Complete Combined Dataset <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span> <span class="diagnostic-pill">Diagnostic</span></th>
+</tr></thead>
+<tbody>
+<tr><th>PhiUSIIL</th>
+<td class="matrix-score-cell"><strong>F1 0.9947</strong><span>Recall 0.9914</span><span>Accuracy 0.9955</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9966</strong><span>Recall 1.0000</span><span>Accuracy 0.9939</span><small>Rows Tested: 14,182 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6662</strong><span>Recall 1.0000</span><span>Accuracy 0.4994</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8949</strong><span>Recall 0.9959</span><span>Accuracy 0.8747</span><small>Rows Tested: 78,982 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8947</strong><span>Recall 0.9961</span><span>Accuracy 0.8747</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>LegitPhish</th>
+<td class="matrix-score-cell"><strong>F1 0.9712</strong><span>Recall 0.9440</span><span>Accuracy 0.9727</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9996</strong><span>Recall 0.9998</span><span>Accuracy 0.9996</span><small>Rows Tested: 20,175 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6613</strong><span>Recall 1.0000</span><span>Accuracy 0.4940</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8842</strong><span>Recall 0.9732</span><span>Accuracy 0.8639</span><small>Rows Tested: 78,876 | URL Overlap Removed: 6,099</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8844</strong><span>Recall 0.9735</span><span>Accuracy 0.8640</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>PhishStorm</th>
+<td class="matrix-score-cell"><strong>F1 0.5926</strong><span>Recall 0.9334</span><span>Accuracy 0.4520</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7335</strong><span>Recall 0.8939</span><span>Accuracy 0.5939</span><small>Rows Tested: 19,959 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9155</strong><span>Recall 0.8992</span><span>Accuracy 0.9171</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6923</strong><span>Recall 0.9139</span><span>Accuracy 0.5963</span><small>Rows Tested: 84,759 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7369</strong><span>Recall 0.9256</span><span>Accuracy 0.6465</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>Combined Dataset</th>
+<td class="matrix-score-cell"><strong>F1 0.9948</strong><span>Recall 0.9904</span><span>Accuracy 0.9949</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9985</strong><span>Recall 0.9998</span><span>Accuracy 0.9973</span><small>Rows Tested: 13,966 | URL Overlap Removed: 6,209</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9135</strong><span>Recall 0.9004</span><span>Accuracy 0.9158</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9779</strong><span>Recall 0.9731</span><span>Accuracy 0.9746</span><small>Rows Tested: 72,667 | URL Overlap Removed: 12,308</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9893</strong><span>Recall 0.9842</span><span>Accuracy 0.9886</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+</tbody>
+</table>
+</div></article>
+<article class="model-block"><h3>Linear SVM: Training Scenario vs Test Scenario</h3><p>Margin-based linear classifier. Useful as a strong classical baseline for numeric feature vectors.</p><div class="matrix-scroll">
+<table class="model-matrix">
+<thead><tr><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhiUSIIL Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">LegitPhish Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhishStorm Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Combined Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Complete Combined Dataset <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span> <span class="diagnostic-pill">Diagnostic</span></th>
+</tr></thead>
+<tbody>
+<tr><th>PhiUSIIL</th>
+<td class="matrix-score-cell"><strong>F1 0.9915</strong><span>Recall 0.9833</span><span>Accuracy 0.9928</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9952</strong><span>Recall 0.9969</span><span>Accuracy 0.9913</span><small>Rows Tested: 14,182 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6701</strong><span>Recall 0.8284</span><span>Accuracy 0.5927</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9070</strong><span>Recall 0.9524</span><span>Accuracy 0.8953</span><small>Rows Tested: 78,982 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9077</strong><span>Recall 0.9535</span><span>Accuracy 0.8963</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>LegitPhish</th>
+<td class="matrix-score-cell"><strong>F1 0.7639</strong><span>Recall 0.6180</span><span>Accuracy 0.8135</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9966</strong><span>Recall 0.9935</span><span>Accuracy 0.9957</span><small>Rows Tested: 20,175 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6600</strong><span>Recall 0.9970</span><span>Accuracy 0.4925</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7979</strong><span>Recall 0.8151</span><span>Accuracy 0.7795</span><small>Rows Tested: 78,876 | URL Overlap Removed: 6,099</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7983</strong><span>Recall 0.8158</span><span>Accuracy 0.7796</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>PhishStorm</th>
+<td class="matrix-score-cell"><strong>F1 0.5920</strong><span>Recall 0.5241</span><span>Accuracy 0.6915</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9237</strong><span>Recall 0.9527</span><span>Accuracy 0.9016</span><small>Rows Tested: 19,959 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8176</strong><span>Recall 0.7550</span><span>Accuracy 0.8317</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7529</strong><span>Recall 0.7034</span><span>Accuracy 0.7707</span><small>Rows Tested: 84,759 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7637</strong><span>Recall 0.7038</span><span>Accuracy 0.7672</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>Combined Dataset</th>
+<td class="matrix-score-cell"><strong>F1 0.9058</strong><span>Recall 0.8310</span><span>Accuracy 0.9156</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9943</strong><span>Recall 0.9919</span><span>Accuracy 0.9898</span><small>Rows Tested: 13,966 | URL Overlap Removed: 6,209</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7804</strong><span>Recall 0.7469</span><span>Accuracy 0.7923</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9052</strong><span>Recall 0.8601</span><span>Accuracy 0.8962</span><small>Rows Tested: 72,667 | URL Overlap Removed: 12,308</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9047</strong><span>Recall 0.8603</span><span>Accuracy 0.9031</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+</tbody>
+</table>
+</div></article>
+<article class="model-block"><h3>XGBoost: Training Scenario vs Test Scenario</h3><p>Gradient-boosted trees from the separate XGBoost library. Useful because it often performs strongly on tabular data.</p><div class="matrix-scroll">
+<table class="model-matrix">
+<thead><tr><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhiUSIIL Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">LegitPhish Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">PhishStorm Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Combined Test <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th>
+<th><span class="tooltip" tabindex="0">Complete Combined Dataset <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span> <span class="diagnostic-pill">Diagnostic</span></th>
+</tr></thead>
+<tbody>
+<tr><th>PhiUSIIL</th>
+<td class="matrix-score-cell"><strong>F1 0.9952</strong><span>Recall 0.9912</span><span>Accuracy 0.9959</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9966</strong><span>Recall 1.0000</span><span>Accuracy 0.9939</span><small>Rows Tested: 14,182 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6662</strong><span>Recall 1.0000</span><span>Accuracy 0.4994</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8951</strong><span>Recall 0.9958</span><span>Accuracy 0.8749</span><small>Rows Tested: 78,982 | URL Overlap Removed: 5,993</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8946</strong><span>Recall 0.9958</span><span>Accuracy 0.8746</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>LegitPhish</th>
+<td class="matrix-score-cell"><strong>F1 0.9141</strong><span>Recall 0.8418</span><span>Accuracy 0.9228</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9997</strong><span>Recall 0.9999</span><span>Accuracy 0.9997</span><small>Rows Tested: 20,175 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.6613</strong><span>Recall 1.0000</span><span>Accuracy 0.4940</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8589</strong><span>Recall 0.9245</span><span>Accuracy 0.8378</span><small>Rows Tested: 78,876 | URL Overlap Removed: 6,099</small></td>
+<td class="matrix-score-cell"><strong>F1 0.8586</strong><span>Recall 0.9237</span><span>Accuracy 0.8373</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>PhishStorm</th>
+<td class="matrix-score-cell"><strong>F1 0.6618</strong><span>Recall 0.8723</span><span>Accuracy 0.6193</span><small>Rows Tested: 47,074 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7997</strong><span>Recall 0.8974</span><span>Accuracy 0.7188</span><small>Rows Tested: 19,959 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9168</strong><span>Recall 0.8879</span><span>Accuracy 0.9196</span><small>Rows Tested: 19,182 | URL Overlap Removed: 0</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7540</strong><span>Recall 0.8832</span><span>Accuracy 0.7136</span><small>Rows Tested: 84,759 | URL Overlap Removed: 216</small></td>
+<td class="matrix-score-cell"><strong>F1 0.7824</strong><span>Recall 0.8840</span><span>Accuracy 0.7370</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+<tr><th>Combined Dataset</th>
+<td class="matrix-score-cell"><strong>F1 0.9947</strong><span>Recall 0.9899</span><span>Accuracy 0.9948</span><small>Rows Tested: 41,182 | URL Overlap Removed: 5,892</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9978</strong><span>Recall 0.9993</span><span>Accuracy 0.9960</span><small>Rows Tested: 13,966 | URL Overlap Removed: 6,209</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9144</strong><span>Recall 0.8929</span><span>Accuracy 0.9175</span><small>Rows Tested: 18,975 | URL Overlap Removed: 207</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9780</strong><span>Recall 0.9711</span><span>Accuracy 0.9748</span><small>Rows Tested: 72,667 | URL Overlap Removed: 12,308</small></td>
+<td class="matrix-score-cell"><strong>F1 0.9784</strong><span>Recall 0.9719</span><span>Accuracy 0.9771</span><small>Rows Tested: 393,918 | URL Overlap Removed: 0 | Diagnostic: includes training rows</small></td>
+</tr>
+</tbody>
+</table>
+</div></article>
+</div>
+</details>
+
+<details class="report-section" id="model-comparison-section" open>
+<summary>Model Comparison</summary>
+<div class="report-section-body">
+<div class="comparison-grid"><article><h3>Best Model by Training Scenario on Combined Test</h3><p>This answers: if the training source is fixed, which algorithm wins on the mixed combined test set?</p><table>
+<thead><tr><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th><th><span class="tooltip" tabindex="0">Winning Model <span class="hint">?</span><span class="tooltip-text" role="tooltip">The highest-scoring model for this training/testing situation.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Phishing F1 <span class="hint">?</span><span class="tooltip-text" role="tooltip">A combined phishing precision and recall score.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Rows Tested <span class="hint">?</span><span class="tooltip-text" role="tooltip">Number of URL rows scored in this result.</span></span></th></tr></thead>
+<tbody>
+<tr><td>Combined Dataset</td><td>XGBoost</td><td class="num">0.9780</td><td class="num">72,667</td></tr>
+<tr><td>LegitPhish</td><td>Random Forest</td><td class="num">0.8842</td><td class="num">78,876</td></tr>
+<tr><td>PhishStorm</td><td>Logistic Regression</td><td class="num">0.7567</td><td class="num">84,759</td></tr>
+<tr><td>PhiUSIIL</td><td>Linear SVM</td><td class="num">0.9070</td><td class="num">78,982</td></tr>
+</tbody>
+</table></article><article><h3>Overall Model Ranking Across Clean Holdouts</h3><p>This ranks complete trained model artefacts by mean phishing F1, then worst-case phishing F1.</p><table>
+<thead><tr><th><span class="tooltip" tabindex="0">Rank <span class="hint">?</span><span class="tooltip-text" role="tooltip">Position after sorting by the selected score. Rank 1 is the current winner.</span></span></th><th><span class="tooltip" tabindex="0">Model <span class="hint">?</span><span class="tooltip-text" role="tooltip">The machine-learning algorithm that was trained and tested.</span></span></th><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Mean F1 <span class="hint">?</span><span class="tooltip-text" role="tooltip">Average phishing F1 across clean holdout datasets.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Worst F1 <span class="hint">?</span><span class="tooltip-text" role="tooltip">Lowest phishing F1 across clean holdout datasets.</span></span></th></tr></thead>
+<tbody>
+<tr><td>1</td><td>XGBoost <span class="winner">Backend candidate</span></td><td>Combined Dataset</td><td class="num">0.9712</td><td class="num">0.9144</td></tr>
+<tr><td>2</td><td>Random Forest</td><td>Combined Dataset</td><td class="num">0.9712</td><td class="num">0.9135</td></tr>
+<tr><td>3</td><td>Decision Tree</td><td>Combined Dataset</td><td class="num">0.9645</td><td class="num">0.8946</td></tr>
+<tr><td>4</td><td>Logistic Regression</td><td>Combined Dataset</td><td class="num">0.9021</td><td class="num">0.7826</td></tr>
+<tr><td>5</td><td>Linear SVM</td><td>Combined Dataset</td><td class="num">0.8964</td><td class="num">0.7804</td></tr>
+<tr><td>6</td><td>Linear SVM</td><td>PhiUSIIL</td><td class="num">0.8909</td><td class="num">0.6701</td></tr>
+<tr><td>7</td><td>XGBoost</td><td>PhiUSIIL</td><td class="num">0.8883</td><td class="num">0.6662</td></tr>
+<tr><td>8</td><td>Random Forest</td><td>PhiUSIIL</td><td class="num">0.8881</td><td class="num">0.6662</td></tr>
+<tr><td>9</td><td>Decision Tree</td><td>PhiUSIIL</td><td class="num">0.8881</td><td class="num">0.6662</td></tr>
+<tr><td>10</td><td>Logistic Regression</td><td>PhiUSIIL</td><td class="num">0.8866</td><td class="num">0.6648</td></tr>
+<tr><td>11</td><td>Random Forest</td><td>LegitPhish</td><td class="num">0.8791</td><td class="num">0.6613</td></tr>
+<tr><td>12</td><td>Decision Tree</td><td>LegitPhish</td><td class="num">0.8669</td><td class="num">0.6610</td></tr>
+<tr><td>13</td><td>XGBoost</td><td>LegitPhish</td><td class="num">0.8585</td><td class="num">0.6613</td></tr>
+<tr><td>14</td><td>Logistic Regression</td><td>LegitPhish</td><td class="num">0.8219</td><td class="num">0.6602</td></tr>
+<tr><td>15</td><td>Linear SVM</td><td>LegitPhish</td><td class="num">0.8046</td><td class="num">0.6600</td></tr>
+<tr><td>16</td><td>XGBoost</td><td>PhishStorm</td><td class="num">0.7831</td><td class="num">0.6618</td></tr>
+<tr><td>17</td><td>Logistic Regression</td><td>PhishStorm</td><td class="num">0.7759</td><td class="num">0.6008</td></tr>
+<tr><td>18</td><td>Linear SVM</td><td>PhishStorm</td><td class="num">0.7716</td><td class="num">0.5920</td></tr>
+<tr><td>19</td><td>Random Forest</td><td>PhishStorm</td><td class="num">0.7335</td><td class="num">0.5926</td></tr>
+<tr><td>20</td><td>Decision Tree</td><td>PhishStorm</td><td class="num">0.7141</td><td class="num">0.5844</td></tr>
+</tbody>
+</table></article></div><p class="section-note">Use this section for model comparison. Use the per-model matrices above when you want to understand one algorithm in detail.</p>
+</div>
+</details>
+
+<details class="report-section" id="model-summary-section" open>
+<summary>Model Summary View</summary>
+<div class="report-section-body">
+<div class="section-heading">
+<div>
+<p class="section-note">Model-oriented summary across the currently selected scenarios and datasets. This is the main view for deciding which model is strongest overall.</p>
+</div>
+<div id="modelSummaryStats" class="view-summary"></div>
+</div>
+<div id="modelSummaryView"></div>
+</div>
+</details>
+
+<details class="report-section" id="scenario-section">
+<summary>Scenario View</summary>
+<div class="report-section-body">
+<div class="section-heading">
+<div>
+<p class="section-note">Scenario-oriented table showing which model wins inside each training/testing situation.</p>
+</div>
+<div id="scenarioSummary" class="view-summary"></div>
+</div>
+<div id="scenarioView"></div>
+</div>
+</details>
+
+<details class="report-section" id="ranking-section">
+<summary>Ranking View</summary>
+<div class="report-section-body">
+<div class="section-heading">
+<div>
+<p class="section-note">Sorted by the selected metric. The top row is the current winner under your filters.</p>
+</div>
+<div id="rankingSummary" class="view-summary"></div>
+</div>
+<div id="rankingView"></div>
+</div>
+</details>
+
+<details class="report-section" id="matrix-section">
+<summary>Heatmap Matrix View</summary>
+<div class="report-section-body">
+<div class="section-heading">
+<div>
+<p class="section-note">Training scenarios are rows, test datasets are columns. Each cell shows the best model for that pairing.</p>
+</div>
+<div id="matrixSummary" class="view-summary"></div>
+</div>
+<div id="matrixView"></div>
+</div>
+</details>
+
+<details class="report-section" id="detail-section">
+<summary>Per Model and Dataset Results View</summary>
+<div class="report-section-body">
+<div class="section-heading">
+<div>
+<p class="section-note">Use this when you need exact metrics for one model, several models, one dataset, or many datasets.</p>
+</div>
+<div id="detailSummary" class="view-summary"></div>
+</div>
+<div id="detailView"></div>
+</div>
+</details>
+
+<details class="report-section" id="confusion-view-section">
+<summary>Confusion Matrices</summary>
+<div class="report-section-body">
+<p class="section-note">Rows are actual labels and columns are predicted labels. Label 0 is phishing; label 1 is legitimate.</p>
+<div id="confusionView"></div>
+</div>
+</details>
+
+<details class="report-section" id="comparison-section">
+<summary>Single-Source vs Combined Training (Combined Training Comparison)</summary>
+<div class="report-section-body">
+<p class="section-note">This compact table compares the best <code>combined_dataset</code> clean-holdout result against the best single-source result for each test dataset.</p>
+<table>
+<thead><tr><th><span class="tooltip" tabindex="0">Tested On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th><th><span class="tooltip" tabindex="0">Combined Best Model <span class="hint">?</span><span class="tooltip-text" role="tooltip">Best model trained on the combined training dataset.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Phishing F1 <span class="hint">?</span><span class="tooltip-text" role="tooltip">Phishing F1 for the best combined-training result.</span></span></th><th><span class="tooltip" tabindex="0">Best Single-Source Scenario <span class="hint">?</span><span class="tooltip-text" role="tooltip">Best one-dataset training source for the same test dataset.</span></span></th><th><span class="tooltip" tabindex="0">Best Single-Source Model <span class="hint">?</span><span class="tooltip-text" role="tooltip">Best one-dataset trained model for the same test dataset.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Single-Source F1 <span class="hint">?</span><span class="tooltip-text" role="tooltip">Phishing F1 for the best single-source result.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Difference <span class="hint">?</span><span class="tooltip-text" role="tooltip">Combined-training F1 minus the best single-source F1 for the same test dataset.</span></span></th></tr></thead>
+<tbody>
+<tr><td>combined_test</td><td>XGBoost <span class="winner">Winner</span></td><td class="num">0.9780</td><td>phiusiil_main</td><td>Linear SVM</td><td class="num">0.9070</td><td class="num">0.0710</td></tr>
+<tr><td>legitphish_test</td><td>Random Forest</td><td class="num">0.9985</td><td>legitphish</td><td>XGBoost</td><td class="num">0.9997</td><td class="num">-0.0012</td></tr>
+<tr><td>phishstorm_test</td><td>XGBoost</td><td class="num">0.9144</td><td>phishstorm</td><td>XGBoost</td><td class="num">0.9168</td><td class="num">-0.0024</td></tr>
+<tr><td>phiusiil_main_test</td><td>Random Forest</td><td class="num">0.9948</td><td>phiusiil_main</td><td>XGBoost</td><td class="num">0.9952</td><td class="num">-0.0004</td></tr>
+</tbody>
+</table>
+</div>
+</details>
+
+<details class="report-section" id="complete-diagnostic-section">
+<summary>Complete Combined Dataset Diagnostic</summary>
+<div class="report-section-body">
+<p class="section-note">The Complete Combined Dataset includes training rows, so use it only as diagnostic evidence. The backend recommendation and dissertation headline conclusions should come from clean holdout rows.</p>
+</div>
+</details>
+
+<details class="report-section" id="guide-section">
+<summary>Metric and Model Explanations</summary>
+<div class="report-section-body guide-grid">
+<article class="guide-card" title="Overall correctness across phishing and legitimate URLs."><h3>Accuracy</h3><p>Overall correctness across phishing and legitimate URLs.</p></article>
+<article class="guide-card" title="When the model predicts phishing, how often it is right."><h3>Phishing Precision</h3><p>When the model predicts phishing, how often it is right.</p></article>
+<article class="guide-card" title="How many real phishing URLs the model catches."><h3>Phishing Recall</h3><p>How many real phishing URLs the model catches.</p></article>
+<article class="guide-card" title="A combined phishing precision and recall score."><h3>Phishing F1</h3><p>A combined phishing precision and recall score.</p></article>
+<article class="guide-card" title="Simple linear baseline. Useful because it is fast, explainable, and shows whether the URL-only features already separate the classes."><h3>Logistic Regression</h3><p>Simple linear baseline. Useful because it is fast, explainable, and shows whether the URL-only features already separate the classes.</p></article>
+<article class="guide-card" title="Rule-based model. Useful because its splits are easy to understand, but it can overfit one dataset."><h3>Decision Tree</h3><p>Rule-based model. Useful because its splits are easy to understand, but it can overfit one dataset.</p></article>
+<article class="guide-card" title="Many decision trees combined. Useful because it is stronger than one tree and handles non-linear feature patterns."><h3>Random Forest</h3><p>Many decision trees combined. Useful because it is stronger than one tree and handles non-linear feature patterns.</p></article>
+<article class="guide-card" title="Margin-based linear classifier. Useful as a strong classical baseline for numeric feature vectors."><h3>Linear SVM</h3><p>Margin-based linear classifier. Useful as a strong classical baseline for numeric feature vectors.</p></article>
+<article class="guide-card" title="Gradient-boosted trees from the separate XGBoost library. Useful because it often performs strongly on tabular data."><h3>XGBoost</h3><p>Gradient-boosted trees from the separate XGBoost library. Useful because it often performs strongly on tabular data.</p></article>
+</div>
+</details>
+
+<details class="report-section" id="programmatic-summary-section">
+<summary>Programmatic Summary</summary>
+<div class="report-section-body">
+<p>The same summary is written to <code>cross_dataset_summary.json</code>. Metrics are also written to <code>test_summary.csv</code>.</p>
+<table>
+<thead><tr><th><span class="tooltip" tabindex="0">Summary Item <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dissertation question answered by this row.</span></span></th><th><span class="tooltip" tabindex="0">Tested On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset used to test the trained model.</span></span></th><th><span class="tooltip" tabindex="0">Trained On <span class="hint">?</span><span class="tooltip-text" role="tooltip">The dataset source used to train the model.</span></span></th><th><span class="tooltip" tabindex="0">Model <span class="hint">?</span><span class="tooltip-text" role="tooltip">The machine-learning algorithm that was trained and tested.</span></span></th><th class="num"><span class="tooltip" tabindex="0">Phishing F1 <span class="hint">?</span><span class="tooltip-text" role="tooltip">A combined phishing precision and recall score.</span></span></th><th><span class="tooltip" tabindex="0">Evidence Type <span class="hint">?</span><span class="tooltip-text" role="tooltip">Whether the row should be treated as clean holdout evidence or diagnostic evidence.</span></span></th></tr></thead>
+<tbody>
+<tr><td>Best clean holdout result</td><td>combined_test</td><td>combined_dataset</td><td>XGBoost</td><td class="num">0.9780</td><td>Untouched 20 percent test rows</td></tr>
+<tr><td>Best clean holdout result</td><td>legitphish_test</td><td>legitphish</td><td>XGBoost</td><td class="num">0.9997</td><td>Untouched 20 percent test rows</td></tr>
+<tr><td>Best clean holdout result</td><td>phishstorm_test</td><td>phishstorm</td><td>XGBoost</td><td class="num">0.9168</td><td>Untouched 20 percent test rows</td></tr>
+<tr><td>Best clean holdout result</td><td>phiusiil_main_test</td><td>phiusiil_main</td><td>XGBoost</td><td class="num">0.9952</td><td>Untouched 20 percent test rows</td></tr>
+<tr><td>Best complete combined diagnostic</td><td>complete_combined_dataset</td><td>combined_dataset</td><td>Random Forest</td><td class="num">0.9893</td><td>Includes training rows</td></tr>
+</tbody>
+</table>
+</div>
+</details>
+
+</main>
+<script id="reportData" type="application/json">{"generated_at": "2026-07-12 02:01", "metrics": [{"training_scenario": "combined_dataset", "model": "Decision Tree", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 12308, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 12,308 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 72667, "accuracy": 0.9686239971376278, "phishing_precision": 0.9788504302426763, "phishing_recall": 0.9664693809364708, "phishing_f1": 0.9726205058001297, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.36926933308131993, "predict_seconds": 0.004920665989629924}, {"training_scenario": "combined_dataset", "model": "Decision Tree", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6209, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,209 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 13966, "accuracy": 0.996777889159387, "phishing_precision": 0.99752, "phishing_recall": 0.9988784747256269, "phishing_f1": 0.9981987751671136, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.36926933308131993, "predict_seconds": 0.000992459012195468}, {"training_scenario": "combined_dataset", "model": "Decision Tree", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.8974967061923583, "phishing_precision": 0.9088507265521797, "phishing_recall": 0.8808279099541235, "phishing_f1": 0.8946199273988189, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.36926933308131993, "predict_seconds": 0.002455958048813045}, {"training_scenario": "combined_dataset", "model": "Decision Tree", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.9928123937642659, "phishing_precision": 0.9990929248135456, "phishing_recall": 0.9861719060883406, "phishing_f1": 0.992590367477721, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.36926933308131993, "predict_seconds": 0.002859042026102543}, {"training_scenario": "combined_dataset", "model": "Linear SVM", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 12308, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 12,308 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 72667, "accuracy": 0.8961564396493594, "phishing_precision": 0.9553599830346728, "phishing_recall": 0.8601021430957949, "phishing_f1": 0.9052319594102429, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.5860932079376653, "predict_seconds": 0.0016738340491428971}, {"training_scenario": "combined_dataset", "model": "Linear SVM", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6209, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,209 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 13966, "accuracy": 0.9898324502362881, "phishing_precision": 0.9966996699669967, "phishing_recall": 0.9919089962348794, "phishing_f1": 0.9942985625953585, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.5860932079376653, "predict_seconds": 0.0008883340051397681}, {"training_scenario": "combined_dataset", "model": "Linear SVM", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.7923056653491436, "phishing_precision": 0.8169194865810968, "phishing_recall": 0.7469326789715139, "phishing_f1": 0.780360028980661, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.5860932079376653, "predict_seconds": 0.000992082990705967}, {"training_scenario": "combined_dataset", "model": "Linear SVM", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.915594191637123, "phishing_precision": 0.9952936971285595, "phishing_recall": 0.8310286510147235, "phishing_f1": 0.9057739224722147, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.5860932079376653, "predict_seconds": 0.0017213750397786498}, {"training_scenario": "combined_dataset", "model": "Logistic Regression", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 12308, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 12,308 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 72667, "accuracy": 0.9026793455075894, "phishing_precision": 0.953421162257863, "phishing_recall": 0.8739200992792707, "phishing_f1": 0.9119412277424979, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.18078920897096395, "predict_seconds": 0.002259999979287386}, {"training_scenario": "combined_dataset", "model": "Logistic Regression", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6209, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,209 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 13966, "accuracy": 0.9910496921094085, "phishing_precision": 0.9963052208835341, "phishing_recall": 0.9936713930946086, "phishing_f1": 0.9949865639914972, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.18078920897096395, "predict_seconds": 0.0008542909054085612}, {"training_scenario": "combined_dataset", "model": "Logistic Regression", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.7927799736495389, "phishing_precision": 0.8121629374641423, "phishing_recall": 0.7551477648565027, "phishing_f1": 0.7826183104820875, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.18078920897096395, "predict_seconds": 0.001050333958119154}, {"training_scenario": "combined_dataset", "model": "Logistic Regression", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.9263756009907241, "phishing_precision": 0.9933533695526529, "phishing_recall": 0.8549044966175885, "phishing_f1": 0.9189434850024061, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.18078920897096395, "predict_seconds": 0.002111417008563876}, {"training_scenario": "combined_dataset", "model": "Random Forest", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 12308, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 12,308 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 72667, "accuracy": 0.9746377310195825, "phishing_precision": 0.9827432455231255, "phishing_recall": 0.973103909121283, "phishing_f1": 0.977899823726212, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib", "train_seconds": 1.5129354579839855, "predict_seconds": 0.055055417004041374}, {"training_scenario": "combined_dataset", "model": "Random Forest", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6209, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,209 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 13966, "accuracy": 0.9972791064012602, "phishing_precision": 0.9972033559728326, "phishing_recall": 0.9997596731554914, "phishing_f1": 0.9984798783902712, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib", "train_seconds": 1.5129354579839855, "predict_seconds": 0.014132541953586042}, {"training_scenario": "combined_dataset", "model": "Random Forest", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.9157839262187089, "phishing_precision": 0.9270570141711524, "phishing_recall": 0.9003520751093567, "phishing_f1": 0.9135094176228621, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib", "train_seconds": 1.5129354579839855, "predict_seconds": 0.02787208405788988}, {"training_scenario": "combined_dataset", "model": "Random Forest", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.9949006847651887, "phishing_precision": 0.999096838936277, "phishing_recall": 0.990449661758854, "phishing_f1": 0.9947544587100964, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib", "train_seconds": 1.5129354579839855, "predict_seconds": 0.03871774999424815}, {"training_scenario": "combined_dataset", "model": "XGBoost", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 12308, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 12,308 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 72667, "accuracy": 0.9747891064719887, "phishing_precision": 0.9850150091991866, "phishing_recall": 0.9710515011216648, "phishing_f1": 0.9779834154548732, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.6762830830411986, "predict_seconds": 0.013777207932434976}, {"training_scenario": "combined_dataset", "model": "XGBoost", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6209, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,209 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 13966, "accuracy": 0.9959902620650151, "phishing_precision": 0.9962463062055746, "phishing_recall": 0.9992790194664743, "phishing_f1": 0.9977603583426652, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.6762830830411986, "predict_seconds": 0.004207291058264673}, {"training_scenario": "combined_dataset", "model": "XGBoost", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.9174703557312253, "phishing_precision": 0.9370731161124174, "phishing_recall": 0.8928838152139122, "phishing_f1": 0.9144449300699301, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.6762830830411986, "predict_seconds": 0.004211166989989579}, {"training_scenario": "combined_dataset", "model": "XGBoost", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.9948035549511922, "phishing_precision": 0.9994977398292315, "phishing_recall": 0.9898527656187823, "phishing_f1": 0.9946518718448543, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.6762830830411986, "predict_seconds": 0.008401208091527224}, {"training_scenario": "legitphish", "model": "Decision Tree", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6099, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,099 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78876, "accuracy": 0.8483442365231503, "phishing_precision": 0.8054947726720155, "phishing_recall": 0.9439194643620304, "phishing_f1": 0.8692306010451057, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_legitphish_80_20.joblib", "train_seconds": 0.027634500060230494, "predict_seconds": 0.002290374948643148}, {"training_scenario": "legitphish", "model": "Decision Tree", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 20175, "accuracy": 0.9992565055762082, "phishing_precision": 0.9993700787401575, "phishing_recall": 0.9994487754941334, "phishing_f1": 0.9994094255679358, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_legitphish_80_20.joblib", "train_seconds": 0.027634500060230494, "predict_seconds": 0.0008236250141635537}, {"training_scenario": "legitphish", "model": "Decision Tree", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.49391304347826087, "phishing_precision": 0.4939326791178643, "phishing_recall": 0.9988264163021444, "phishing_f1": 0.6609948106047234, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_legitphish_80_20.joblib", "train_seconds": 0.027634500060230494, "predict_seconds": 0.0008788330014795065}, {"training_scenario": "legitphish", "model": "Decision Tree", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.943081928998106, "phishing_precision": 1.0, "phishing_recall": 0.8834062873060088, "phishing_f1": 0.9380942319881682, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_legitphish_80_20.joblib", "train_seconds": 0.027634500060230494, "predict_seconds": 0.0019681249978020787}, {"training_scenario": "legitphish", "model": "Linear SVM", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6099, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,099 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78876, "accuracy": 0.7794766468887875, "phishing_precision": 0.7813766103701006, "phishing_recall": 0.8150671921743673, "phishing_f1": 0.7978664063589458, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0437066670274362, "predict_seconds": 0.0017697080038487911}, {"training_scenario": "legitphish", "model": "Linear SVM", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 20175, "accuracy": 0.9957372986369268, "phishing_precision": 0.9996830679027019, "phishing_recall": 0.9935427986455626, "phishing_f1": 0.9966034755134281, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0437066670274362, "predict_seconds": 0.0009785840520635247}, {"training_scenario": "legitphish", "model": "Linear SVM", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.49254281949934126, "phishing_precision": 0.49324395650797004, "phishing_recall": 0.9970126960418223, "phishing_f1": 0.6599809315300682, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0437066670274362, "predict_seconds": 0.0011450840393081307}, {"training_scenario": "legitphish", "model": "Linear SVM", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.8135350395803992, "phishing_precision": 1.0, "phishing_recall": 0.6180362116991643, "phishing_f1": 0.7639337206800086, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0437066670274362, "predict_seconds": 0.0015339999226853251}, {"training_scenario": "legitphish", "model": "Logistic Regression", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6099, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,099 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78876, "accuracy": 0.7970231756174249, "phishing_precision": 0.7881168888496513, "phishing_recall": 0.8478085379172801, "phishing_f1": 0.8168736988996408, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0368769170017913, "predict_seconds": 0.0023514589993283153}, {"training_scenario": "legitphish", "model": "Logistic Regression", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 20175, "accuracy": 0.9962329615861214, "phishing_precision": 0.9994460710611696, "phishing_recall": 0.9945665012993149, "phishing_f1": 0.9970003157562362, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0368769170017913, "predict_seconds": 0.0011255419813096523}, {"training_scenario": "legitphish", "model": "Logistic Regression", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.49296442687747033, "phishing_precision": 0.49345231809061146, "phishing_recall": 0.9970126960418223, "phishing_f1": 0.6601674260887994, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0368769170017913, "predict_seconds": 0.0011802500812336802}, {"training_scenario": "legitphish", "model": "Logistic Regression", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.8467048710601719, "phishing_precision": 1.0, "phishing_recall": 0.685982888977318, "phishing_f1": 0.8137483404631951, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0368769170017913, "predict_seconds": 0.0013824590714648366}, {"training_scenario": "legitphish", "model": "Random Forest", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6099, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,099 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78876, "accuracy": 0.8638749429484254, "phishing_precision": 0.8100950611672167, "phishing_recall": 0.9732181015242889, "phishing_f1": 0.8841959942621094, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_legitphish_80_20.joblib", "train_seconds": 0.2413802909431979, "predict_seconds": 0.027957583079114556}, {"training_scenario": "legitphish", "model": "Random Forest", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 20175, "accuracy": 0.9995539033457249, "phishing_precision": 0.999448992443325, "phishing_recall": 0.9998425072840381, "phishing_f1": 0.9996457111364799, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_legitphish_80_20.joblib", "train_seconds": 0.2413802909431979, "predict_seconds": 0.01500333403237164}, {"training_scenario": "legitphish", "model": "Random Forest", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.493965744400527, "phishing_precision": 0.493965744400527, "phishing_recall": 1.0, "phishing_f1": 0.6612812191336249, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_legitphish_80_20.joblib", "train_seconds": 0.2413802909431979, "predict_seconds": 0.02819124993402511}, {"training_scenario": "legitphish", "model": "Random Forest", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.9726579573600117, "phishing_precision": 1.0, "phishing_recall": 0.943991245523279, "phishing_f1": 0.9711887825597462, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_legitphish_80_20.joblib", "train_seconds": 0.2413802909431979, "predict_seconds": 0.02704175002872944}, {"training_scenario": "legitphish", "model": "XGBoost", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6099, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,099 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78876, "accuracy": 0.8378467467924336, "phishing_precision": 0.8020764667106131, "phishing_recall": 0.9244503537679852, "phishing_f1": 0.8589265623965939, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib", "train_seconds": 0.49804908398073167, "predict_seconds": 0.015424082987010479}, {"training_scenario": "legitphish", "model": "XGBoost", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 20175, "accuracy": 0.9996530359355639, "phishing_precision": 0.9995277078085643, "phishing_recall": 0.999921253642019, "phishing_f1": 0.99972444199504, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib", "train_seconds": 0.49804908398073167, "predict_seconds": 0.004462082986719906}, {"training_scenario": "legitphish", "model": "XGBoost", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 207, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 207 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 18975, "accuracy": 0.493965744400527, "phishing_precision": 0.493965744400527, "phishing_recall": 1.0, "phishing_f1": 0.6612812191336249, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib", "train_seconds": 0.49804908398073167, "predict_seconds": 0.004258916014805436}, {"training_scenario": "legitphish", "model": "XGBoost", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5892, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,892 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 41182, "accuracy": 0.922757515419358, "phishing_precision": 1.0, "phishing_recall": 0.8417727815360128, "phishing_f1": 0.914089718313663, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib", "train_seconds": 0.49804908398073167, "predict_seconds": 0.007632290944457054}, {"training_scenario": "phishstorm", "model": "Decision Tree", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 84759, "accuracy": 0.5940018169161977, "phishing_precision": 0.5597212954485499, "phishing_recall": 0.8565627300577073, "phishing_f1": 0.6770342562177382, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.13204029202461243, "predict_seconds": 0.00482166709844023}, {"training_scenario": "phishstorm", "model": "Decision Tree", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 19959, "accuracy": 0.5665614509744977, "phishing_precision": 0.6180239004558334, "phishing_recall": 0.8037330769846992, "phishing_f1": 0.6987498694153289, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.13204029202461243, "predict_seconds": 0.0013954169116914272}, {"training_scenario": "phishstorm", "model": "Decision Tree", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.8970910228339067, "phishing_precision": 0.9016687790452049, "phishing_recall": 0.8911273486430062, "phishing_f1": 0.8963670726585469, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.13204029202461243, "predict_seconds": 0.002626999979838729}, {"training_scenario": "phishstorm", "model": "Decision Tree", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.469622296809279, "phishing_precision": 0.4391653531486902, "phishing_recall": 0.8731098288897732, "phishing_f1": 0.5843889933913738, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.13204029202461243, "predict_seconds": 0.002550959005020559}, {"training_scenario": "phishstorm", "model": "Linear SVM", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 84759, "accuracy": 0.770655623591595, "phishing_precision": 0.8099704659811857, "phishing_recall": 0.7033888242418486, "phishing_f1": 0.7529265223635878, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.053589124931022525, "predict_seconds": 0.0018399580148980021}, {"training_scenario": "phishstorm", "model": "Linear SVM", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 19959, "accuracy": 0.9015982764667568, "phishing_precision": 0.8964945344892574, "phishing_recall": 0.9526556116318192, "phishing_f1": 0.9237222308528817, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.053589124931022525, "predict_seconds": 0.0009391660569235682}, {"training_scenario": "phishstorm", "model": "Linear SVM", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.831717234907726, "phishing_precision": 0.8914222331772246, "phishing_recall": 0.7550104384133611, "phishing_f1": 0.8175652763648694, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.053589124931022525, "predict_seconds": 0.0009929999941959977}, {"training_scenario": "phishstorm", "model": "Linear SVM", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.69146450269788, "phishing_precision": 0.6800697044017039, "phishing_recall": 0.5241245523278949, "phishing_f1": 0.591999550536547, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.053589124931022525, "predict_seconds": 0.0014699160819873214}, {"training_scenario": "phishstorm", "model": "Logistic Regression", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 84759, "accuracy": 0.7699005415354122, "phishing_precision": 0.7970408914117524, "phishing_recall": 0.7202498278277802, "phishing_f1": 0.7567021369493894, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.04768095794133842, "predict_seconds": 0.0021033750381320715}, {"training_scenario": "phishstorm", "model": "Logistic Regression", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 19959, "accuracy": 0.8987925246755849, "phishing_precision": 0.8863451739162543, "phishing_recall": 0.9614675959304654, "phishing_f1": 0.9223793421457116, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.04768095794133842, "predict_seconds": 0.0010145839769393206}, {"training_scenario": "phishstorm", "model": "Logistic Regression", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.8357835470753832, "phishing_precision": 0.887816646562123, "phishing_recall": 0.7682672233820459, "phishing_f1": 0.8237269166200336, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.04768095794133842, "predict_seconds": 0.0009099169401451945}, {"training_scenario": "phishstorm", "model": "Logistic Regression", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.6891065131495093, "phishing_precision": 0.6651567312919007, "phishing_recall": 0.5478014325507362, "phishing_f1": 0.6008019421183274, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.04768095794133842, "predict_seconds": 0.0014662080211564898}, {"training_scenario": "phishstorm", "model": "Random Forest", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 84759, "accuracy": 0.5963496501846411, "phishing_precision": 0.5571577484364142, "phishing_recall": 0.9139138901422499, "phishing_f1": 0.6922765580449897, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.4023249589372426, "predict_seconds": 0.05130270798690617}, {"training_scenario": "phishstorm", "model": "Random Forest", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 19959, "accuracy": 0.5938674282278671, "phishing_precision": 0.621996766820893, "phishing_recall": 0.8938556436753985, "phishing_f1": 0.7335480901978831, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.4023249589372426, "predict_seconds": 0.01500554196536541}, {"training_scenario": "phishstorm", "model": "Random Forest", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.9170576582212491, "phishing_precision": 0.9323519861456868, "phishing_recall": 0.8991649269311065, "phishing_f1": 0.9154577820288007, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.4023249589372426, "predict_seconds": 0.02698908292222768}, {"training_scenario": "phishstorm", "model": "Random Forest", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.4519692399201258, "phishing_precision": 0.43413381454747363, "phishing_recall": 0.9333963390370076, "phishing_f1": 0.5926288529560384, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.4023249589372426, "predict_seconds": 0.025847167009487748}, {"training_scenario": "phishstorm", "model": "XGBoost", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 84759, "accuracy": 0.7136115338784081, "phishing_precision": 0.6577006737757971, "phishing_recall": 0.8832078653019545, "phishing_f1": 0.7539531300681155, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.5263378749368712, "predict_seconds": 0.014422083040699363}, {"training_scenario": "phishstorm", "model": "XGBoost", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 19959, "accuracy": 0.7187734856455734, "phishing_precision": 0.7211278485901893, "phishing_recall": 0.897380437394857, "phishing_f1": 0.7996573508941001, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.5263378749368712, "predict_seconds": 0.004542957991361618}, {"training_scenario": "phishstorm", "model": "XGBoost", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.9195600041705766, "phishing_precision": 0.9477437325905292, "phishing_recall": 0.8878914405010438, "phishing_f1": 0.9168418216114255, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.5263378749368712, "predict_seconds": 0.0051639999728649855}, {"training_scenario": "phishstorm", "model": "XGBoost", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.6193015252581042, "phishing_precision": 0.5331853698580159, "phishing_recall": 0.8723139673696777, "phishing_f1": 0.6618360222662515, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.5263378749368712, "predict_seconds": 0.008528750040568411}, {"training_scenario": "phiusiil_main", "model": "Decision Tree", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78982, "accuracy": 0.8746423235673951, "phishing_precision": 0.8125024094992097, "phishing_recall": 0.995888954518606, "phishing_f1": 0.8948971901107183, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.09251562494318932, "predict_seconds": 0.003220624988898635}, {"training_scenario": "phiusiil_main", "model": "Decision Tree", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 14182, "accuracy": 0.9938654632632915, "phishing_precision": 0.9931956827780385, "phishing_recall": 1.0, "phishing_f1": 0.9965862271924661, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.09251562494318932, "predict_seconds": 0.0007639999967068434}, {"training_scenario": "phiusiil_main", "model": "Decision Tree", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.49942654571994577, "phishing_precision": 0.49942654571994577, "phishing_recall": 1.0, "phishing_f1": 0.6661567345803491, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.09251562494318932, "predict_seconds": 0.0008298750035464764}, {"training_scenario": "phiusiil_main", "model": "Decision Tree", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.9954539660959341, "phishing_precision": 0.9979969954932398, "phishing_recall": 0.9913450059689614, "phishing_f1": 0.9946598792234367, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.09251562494318932, "predict_seconds": 0.003074791980907321}, {"training_scenario": "phiusiil_main", "model": "Linear SVM", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78982, "accuracy": 0.8953052594261983, "phishing_precision": 0.8656745264785466, "phishing_recall": 0.9524158298877732, "phishing_f1": 0.9069759593209661, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.34132574999239296, "predict_seconds": 0.0022583329118788242}, {"training_scenario": "phiusiil_main", "model": "Linear SVM", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 14182, "accuracy": 0.9913270342687914, "phishing_precision": 0.9934086629001884, "phishing_recall": 0.9969288920387432, "phishing_f1": 0.9951656644263648, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.34132574999239296, "predict_seconds": 0.0009313750779256225}, {"training_scenario": "phiusiil_main", "model": "Linear SVM", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.5926910645396726, "phishing_precision": 0.5626373626373626, "phishing_recall": 0.82839248434238, "phishing_f1": 0.6701287734853283, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.34132574999239296, "predict_seconds": 0.0011116249952465296}, {"training_scenario": "phiusiil_main", "model": "Linear SVM", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.992819815609466, "phishing_precision": 0.9998988366211431, "phishing_recall": 0.9832869080779945, "phishing_f1": 0.9915232983899283, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.34132574999239296, "predict_seconds": 0.001607416896149516}, {"training_scenario": "phiusiil_main", "model": "Logistic Regression", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78982, "accuracy": 0.8728824289078524, "phishing_precision": 0.812312573761294, "phishing_recall": 0.9919905493207324, "phishing_f1": 0.8932051227502872, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.13027608301490545, "predict_seconds": 0.0022620409727096558}, {"training_scenario": "phiusiil_main", "model": "Logistic Regression", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 14182, "accuracy": 0.9940064870963192, "phishing_precision": 0.9934282584884995, "phishing_recall": 0.999921253642019, "phishing_f1": 0.9966641811545858, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.13027608301490545, "predict_seconds": 0.0010548749705776572}, {"training_scenario": "phiusiil_main", "model": "Logistic Regression", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.49791471170889373, "phishing_precision": 0.49866861588262934, "phishing_recall": 0.996972860125261, "phishing_f1": 0.6648104966414924, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.13027608301490545, "predict_seconds": 0.0013964589452371001}, {"training_scenario": "phiusiil_main", "model": "Logistic Regression", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.9931172196966478, "phishing_precision": 0.9992428066633013, "phishing_recall": 0.9846299243931556, "phishing_f1": 0.9918825474770757, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.13027608301490545, "predict_seconds": 0.03256245795637369}, {"training_scenario": "phiusiil_main", "model": "Random Forest", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78982, "accuracy": 0.8746803069053708, "phishing_precision": 0.8125252992540334, "phishing_recall": 0.9959362079149439, "phishing_f1": 0.8949301515859199, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.7507656669477001, "predict_seconds": 0.028164417017251253}, {"training_scenario": "phiusiil_main", "model": "Random Forest", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 14182, "accuracy": 0.9938654632632915, "phishing_precision": 0.9931956827780385, "phishing_recall": 1.0, "phishing_f1": 0.9965862271924661, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.7507656669477001, "predict_seconds": 0.01505470892880112}, {"training_scenario": "phiusiil_main", "model": "Random Forest", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.49942654571994577, "phishing_precision": 0.49942654571994577, "phishing_recall": 1.0, "phishing_f1": 0.6661567345803491, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.7507656669477001, "predict_seconds": 0.015079708071425557}, {"training_scenario": "phiusiil_main", "model": "Random Forest", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.9955176955431874, "phishing_precision": 0.9980471683941715, "phishing_recall": 0.9914444886589734, "phishing_f1": 0.9947348721147847, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.7507656669477001, "predict_seconds": 0.04140329093206674}, {"training_scenario": "phiusiil_main", "model": "XGBoost", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78982, "accuracy": 0.8749082069332252, "phishing_precision": 0.8128555724837522, "phishing_recall": 0.9958417011222681, "phishing_f1": 0.8950922720805283, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.5748812910169363, "predict_seconds": 0.012650958029553294}, {"training_scenario": "phiusiil_main", "model": "XGBoost", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 14182, "accuracy": 0.9939359751798054, "phishing_precision": 0.9932733672272194, "phishing_recall": 1.0, "phishing_f1": 0.996625333542615, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.5748812910169363, "predict_seconds": 0.003697583102621138}, {"training_scenario": "phiusiil_main", "model": "XGBoost", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.49942654571994577, "phishing_precision": 0.49942654571994577, "phishing_recall": 1.0, "phishing_f1": 0.6661567345803491, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.5748812910169363, "predict_seconds": 0.004410082940012217}, {"training_scenario": "phiusiil_main", "model": "XGBoost", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.9959000722267068, "phishing_precision": 0.9991476560541489, "phishing_recall": 0.9912455232789494, "phishing_f1": 0.9951809033933432, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.5748812910169363, "predict_seconds": 0.008785209036432207}, {"training_scenario": "combined_dataset", "model": "Decision Tree", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.9874694733421676, "phishing_precision": 0.9942376823852823, "phishing_recall": 0.9822566401093944, "phishing_f1": 0.9882108481215219, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.36926933308131993, "predict_seconds": 0.024304082966409624}, {"training_scenario": "combined_dataset", "model": "Linear SVM", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.90310166075173, "phishing_precision": 0.9539576905661967, "phishing_recall": 0.8602894394484697, "phishing_f1": 0.9047055533918532, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.5860932079376653, "predict_seconds": 0.007348082959651947}, {"training_scenario": "combined_dataset", "model": "Logistic Regression", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.9088693585974746, "phishing_precision": 0.9519062645491697, "phishing_recall": 0.8736978548434577, "phishing_f1": 0.9111268456442301, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.18078920897096395, "predict_seconds": 0.009088208083994687}, {"training_scenario": "combined_dataset", "model": "Random Forest", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.9885737640828802, "phishing_precision": 0.9943777373750942, "phishing_recall": 0.9841938332684437, "phishing_f1": 0.9892595765395362, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib", "train_seconds": 1.5129354579839855, "predict_seconds": 0.20596754201687872}, {"training_scenario": "combined_dataset", "model": "XGBoost", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.977084063180662, "phishing_precision": 0.9850668694325603, "phishing_recall": 0.9718727150141966, "phishing_f1": 0.9784253131520266, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.6762830830411986, "predict_seconds": 0.051239749998785555}, {"training_scenario": "legitphish", "model": "Decision Tree", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8480140536863002, "phishing_precision": 0.805543168938147, "phishing_recall": 0.9434937848386147, "phishing_f1": 0.8690782337916798, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_legitphish_80_20.joblib", "train_seconds": 0.027634500060230494, "predict_seconds": 0.009740333072841167}, {"training_scenario": "legitphish", "model": "Linear SVM", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.7795835681537782, "phishing_precision": 0.7815155098699172, "phishing_recall": 0.8158242092168612, "phishing_f1": 0.798301407285922, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0437066670274362, "predict_seconds": 0.006654916098341346}, {"training_scenario": "legitphish", "model": "Logistic Regression", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.7968460441005488, "phishing_precision": 0.788159230327905, "phishing_recall": 0.8479445810819793, "phishing_f1": 0.8169595886588412, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_legitphish_80_20.joblib", "train_seconds": 0.0368769170017913, "predict_seconds": 0.00695524993352592}, {"training_scenario": "legitphish", "model": "Random Forest", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8639640737412355, "phishing_precision": 0.8102576869425707, "phishing_recall": 0.9735487669385701, "phishing_f1": 0.8844293284275772, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_legitphish_80_20.joblib", "train_seconds": 0.2413802909431979, "predict_seconds": 0.07919129193760455}, {"training_scenario": "legitphish", "model": "XGBoost", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8373138571987063, "phishing_precision": 0.8020431805345415, "phishing_recall": 0.9237087752950895, "phishing_f1": 0.8585872628134261, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib", "train_seconds": 0.49804908398073167, "predict_seconds": 0.050073707941919565}, {"training_scenario": "phishstorm", "model": "Decision Tree", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.6430069202219751, "phishing_precision": 0.6176656512061116, "phishing_recall": 0.872187983704787, "phishing_f1": 0.7231858839091683, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.13204029202461243, "predict_seconds": 0.01977516699116677}, {"training_scenario": "phishstorm", "model": "Linear SVM", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.767205357460182, "phishing_precision": 0.8349030034022036, "phishing_recall": 0.7037613833838207, "phishing_f1": 0.7637435398020332, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.053589124931022525, "predict_seconds": 0.006535083055496216}, {"training_scenario": "phishstorm", "model": "Logistic Regression", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.7685660467406922, "phishing_precision": 0.8237318820940343, "phishing_recall": 0.7215427274540154, "phishing_f1": 0.7692584155909896, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.04768095794133842, "predict_seconds": 0.006720667006447911}, {"training_scenario": "phishstorm", "model": "Random Forest", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.646548266390467, "phishing_precision": 0.6120587616598693, "phishing_recall": 0.925603236252101, "phishing_f1": 0.7368635907476739, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.4023249589372426, "predict_seconds": 0.18321633304003626}, {"training_scenario": "phishstorm", "model": "XGBoost", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.7370417193426043, "phishing_precision": 0.7016800705493959, "phishing_recall": 0.8840248036692717, "phishing_f1": 0.7823682662408605, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.5263378749368712, "predict_seconds": 0.05735287501011044}, {"training_scenario": "phiusiil_main", "model": "Decision Tree", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8746541158312136, "phishing_precision": 0.8120268450141657, "phishing_recall": 0.996158849839042, "phishing_f1": 0.8947175395427582, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/decision_tree_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.09251562494318932, "predict_seconds": 0.0151164170820266}, {"training_scenario": "phiusiil_main", "model": "Linear SVM", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8962804441533517, "phishing_precision": 0.8660433584467895, "phishing_recall": 0.9534931201154719, "phishing_f1": 0.9076667532966474, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.34132574999239296, "predict_seconds": 0.010557209025137126}, {"training_scenario": "phiusiil_main", "model": "Logistic Regression", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8726841626937586, "phishing_precision": 0.8115718590779173, "phishing_recall": 0.9922559753862517, "phishing_f1": 0.8928646196044587, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.13027608301490545, "predict_seconds": 0.011825333000160754}, {"training_scenario": "phiusiil_main", "model": "Random Forest", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8746642702288293, "phishing_precision": 0.8120587415619, "phishing_recall": 0.9961208656594528, "phishing_f1": 0.8947215789630805, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.7507656669477001, "predict_seconds": 0.12142945802770555}, {"training_scenario": "phiusiil_main", "model": "XGBoost", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.8746033438431349, "phishing_precision": 0.8121500321408933, "phishing_recall": 0.995793252110496, "phishing_f1": 0.8946447919599362, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.5748812910169363, "predict_seconds": 0.04720020794775337}], "summary": {"scope_summary": {"clean_holdout": {"evaluations": 80, "prediction_rows": 3181960}, "complete_dataset": {"evaluations": 20, "prediction_rows": 7878360}}, "decision_summary": {"backend_recommendation": {"training_scenario": "combined_dataset", "model": "XGBoost", "evaluation_count": 4, "mean_accuracy": 0.9707633198048553, "mean_phishing_recall": 0.9632667753552084, "worst_phishing_recall": 0.8928838152139122, "mean_phishing_f1": 0.9712101439280807, "worst_phishing_f1": 0.9144449300699301, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9977603583426652, "reason": "combined_dataset / XGBoost has the strongest clean-holdout all-round score using mean phishing F1, worst phishing F1, and phishing recall as tie-breakers. This is the most defensible backend choice because it is judged across multiple clean test datasets rather than one same-source split only."}, "best_allrounder": {"training_scenario": "combined_dataset", "model": "XGBoost", "evaluation_count": 4, "mean_accuracy": 0.9707633198048553, "mean_phishing_recall": 0.9632667753552084, "worst_phishing_recall": 0.8928838152139122, "mean_phishing_f1": 0.9712101439280807, "worst_phishing_f1": 0.9144449300699301, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9977603583426652}, "best_training_dataset": {"training_scenario": "combined_dataset", "evaluation_count": 20, "mean_accuracy": 0.9414069536503489, "mean_phishing_recall": 0.9228348157717632, "worst_phishing_recall": 0.7469326789715139, "mean_phishing_f1": 0.9410833895341257, "worst_phishing_f1": 0.780360028980661, "best_model": "Random Forest", "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9984798783902712}, "best_overall_on_combined_test": {"training_scenario": "combined_dataset", "model": "XGBoost", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 12308, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 12,308 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 72667, "accuracy": 0.9747891064719887, "phishing_precision": 0.9850150091991866, "phishing_recall": 0.9710515011216648, "phishing_f1": 0.9779834154548732, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.6762830830411986, "predict_seconds": 0.013777207932434976}, "best_single_source_on_combined_test": {"training_scenario": "phiusiil_main", "model": "Linear SVM", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 78982, "accuracy": 0.8953052594261983, "phishing_precision": 0.8656745264785466, "phishing_recall": 0.9524158298877732, "phishing_f1": 0.9069759593209661, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.34132574999239296, "predict_seconds": 0.0022583329118788242}, "allrounder_ranking": [{"training_scenario": "combined_dataset", "model": "XGBoost", "evaluation_count": 4, "mean_accuracy": 0.9707633198048553, "mean_phishing_recall": 0.9632667753552084, "worst_phishing_recall": 0.8928838152139122, "mean_phishing_f1": 0.9712101439280807, "worst_phishing_f1": 0.9144449300699301, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9977603583426652}, {"training_scenario": "combined_dataset", "model": "Random Forest", "evaluation_count": 4, "mean_accuracy": 0.970650362101185, "mean_phishing_recall": 0.9659163297862462, "worst_phishing_recall": 0.9003520751093567, "mean_phishing_f1": 0.9711608946123604, "worst_phishing_f1": 0.9135094176228621, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9984798783902712}, {"training_scenario": "combined_dataset", "model": "Decision Tree", "evaluation_count": 4, "mean_accuracy": 0.9639277465634097, "mean_phishing_recall": 0.9580869179261404, "worst_phishing_recall": 0.8808279099541235, "mean_phishing_f1": 0.9645073939609459, "worst_phishing_f1": 0.8946199273988189, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9981987751671136}, {"training_scenario": "combined_dataset", "model": "Logistic Regression", "evaluation_count": 4, "mean_accuracy": 0.9032211530643153, "mean_phishing_recall": 0.8694109384619926, "worst_phishing_recall": 0.7551477648565027, "mean_phishing_f1": 0.9021223968046221, "worst_phishing_f1": 0.7826183104820875, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9949865639914972}, {"training_scenario": "combined_dataset", "model": "Linear SVM", "evaluation_count": 4, "mean_accuracy": 0.8984721867179786, "mean_phishing_recall": 0.8574931173292278, "worst_phishing_recall": 0.7469326789715139, "mean_phishing_f1": 0.8964161183646192, "worst_phishing_f1": 0.780360028980661, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9942985625953585}, {"training_scenario": "phiusiil_main", "model": "Linear SVM", "evaluation_count": 4, "mean_accuracy": 0.8680357934610321, "mean_phishing_recall": 0.9402560285867227, "worst_phishing_recall": 0.82839248434238, "mean_phishing_f1": 0.8909484239056469, "worst_phishing_f1": 0.6701287734853283, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9951656644263648}, {"training_scenario": "phiusiil_main", "model": "XGBoost", "evaluation_count": 4, "mean_accuracy": 0.8410427000149208, "mean_phishing_recall": 0.9967718061003044, "worst_phishing_recall": 0.9912455232789494, "mean_phishing_f1": 0.8882638108992089, "worst_phishing_f1": 0.6661567345803491, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.996625333542615}, {"training_scenario": "phiusiil_main", "model": "Random Forest", "evaluation_count": 4, "mean_accuracy": 0.8408725028579489, "mean_phishing_recall": 0.9968451741434793, "worst_phishing_recall": 0.9914444886589734, "mean_phishing_f1": 0.8881019963683799, "worst_phishing_f1": 0.6661567345803491, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9965862271924661}, {"training_scenario": "phiusiil_main", "model": "Decision Tree", "evaluation_count": 4, "mean_accuracy": 0.8408470746616417, "mean_phishing_recall": 0.9968084901218919, "worst_phishing_recall": 0.9913450059689614, "mean_phishing_f1": 0.8880750077767425, "worst_phishing_f1": 0.6661567345803491, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9965862271924661}, {"training_scenario": "phiusiil_main", "model": "Logistic Regression", "evaluation_count": 4, "mean_accuracy": 0.8394802118524283, "mean_phishing_recall": 0.9933786468702921, "worst_phishing_recall": 0.9846299243931556, "mean_phishing_f1": 0.8866405870058602, "worst_phishing_f1": 0.6648104966414924, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9966641811545858}, {"training_scenario": "legitphish", "model": "Random Forest", "evaluation_count": 4, "mean_accuracy": 0.8325131370136722, "mean_phishing_recall": 0.9792629635829015, "worst_phishing_recall": 0.943991245523279, "mean_phishing_f1": 0.87907792677299, "worst_phishing_f1": 0.6612812191336249, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9996457111364799}, {"training_scenario": "legitphish", "model": "Decision Tree", "evaluation_count": 4, "mean_accuracy": 0.8211489286439313, "mean_phishing_recall": 0.9564002358660793, "worst_phishing_recall": 0.8834062873060088, "mean_phishing_f1": 0.8669322673014833, "worst_phishing_f1": 0.6609948106047234, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9994094255679358}, {"training_scenario": "legitphish", "model": "XGBoost", "evaluation_count": 4, "mean_accuracy": 0.8135557606369707, "mean_phishing_recall": 0.9415360972365043, "worst_phishing_recall": 0.8417727815360128, "mean_phishing_f1": 0.8585054854597304, "worst_phishing_f1": 0.6612812191336249, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.99972444199504}, {"training_scenario": "legitphish", "model": "Logistic Regression", "evaluation_count": 4, "mean_accuracy": 0.7832313587852971, "mean_phishing_recall": 0.8813426560589338, "worst_phishing_recall": 0.685982888977318, "mean_phishing_f1": 0.821947445301968, "worst_phishing_f1": 0.6601674260887994, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9970003157562362}, {"training_scenario": "legitphish", "model": "Linear SVM", "evaluation_count": 4, "mean_accuracy": 0.7703229511513637, "mean_phishing_recall": 0.8559147246402291, "worst_phishing_recall": 0.6180362116991643, "mean_phishing_f1": 0.8045961335206127, "worst_phishing_f1": 0.6599809315300682, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9966034755134281}, {"training_scenario": "phishstorm", "model": "XGBoost", "evaluation_count": 4, "mean_accuracy": 0.7428116372381656, "mean_phishing_recall": 0.8851984276418833, "worst_phishing_recall": 0.8723139673696777, "mean_phishing_f1": 0.7830720812099732, "worst_phishing_f1": 0.6618360222662515, "best_test_dataset": "phishstorm_test", "best_phishing_f1": 0.9168418216114255}, {"training_scenario": "phishstorm", "model": "Logistic Regression", "evaluation_count": 4, "mean_accuracy": 0.7983957816089724, "mean_phishing_recall": 0.749446519922757, "worst_phishing_recall": 0.5478014325507362, "mean_phishing_f1": 0.7759025844583655, "worst_phishing_f1": 0.6008019421183274, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9223793421457116}, {"training_scenario": "phishstorm", "model": "Linear SVM", "evaluation_count": 4, "mean_accuracy": 0.7988589094159895, "mean_phishing_recall": 0.733794856653731, "worst_phishing_recall": 0.5241245523278949, "mean_phishing_f1": 0.7715533950294715, "worst_phishing_f1": 0.591999550536547, "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9237222308528817}, {"training_scenario": "phishstorm", "model": "Random Forest", "evaluation_count": 4, "mean_accuracy": 0.6398109941384706, "mean_phishing_recall": 0.9100826999464405, "worst_phishing_recall": 0.8938556436753985, "mean_phishing_f1": 0.7334778208069279, "worst_phishing_f1": 0.5926288529560384, "best_test_dataset": "phishstorm_test", "best_phishing_f1": 0.9154577820288007}, {"training_scenario": "phishstorm", "model": "Decision Tree", "evaluation_count": 4, "mean_accuracy": 0.6318191468834703, "mean_phishing_recall": 0.8561332461437965, "worst_phishing_recall": 0.8037330769846992, "mean_phishing_f1": 0.7141350479207469, "worst_phishing_f1": 0.5843889933913738, "best_test_dataset": "phishstorm_test", "best_phishing_f1": 0.8963670726585469}], "training_dataset_ranking": [{"training_scenario": "combined_dataset", "evaluation_count": 20, "mean_accuracy": 0.9414069536503489, "mean_phishing_recall": 0.9228348157717632, "worst_phishing_recall": 0.7469326789715139, "mean_phishing_f1": 0.9410833895341257, "worst_phishing_f1": 0.780360028980661, "best_model": "Random Forest", "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9984798783902712}, {"training_scenario": "phiusiil_main", "evaluation_count": 20, "mean_accuracy": 0.8460556565695944, "mean_phishing_recall": 0.9848120291645379, "worst_phishing_recall": 0.82839248434238, "mean_phishing_f1": 0.8884059651911678, "worst_phishing_f1": 0.6648104966414924, "best_model": "Logistic Regression", "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9966641811545858}, {"training_scenario": "legitphish", "evaluation_count": 20, "mean_accuracy": 0.8041544272462471, "mean_phishing_recall": 0.9228913354769295, "worst_phishing_recall": 0.6180362116991643, "mean_phishing_f1": 0.8462118516713568, "worst_phishing_f1": 0.6599809315300682, "best_model": "XGBoost", "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.99972444199504}, {"training_scenario": "phishstorm", "evaluation_count": 20, "mean_accuracy": 0.7223392938570138, "mean_phishing_recall": 0.8269311500617216, "worst_phishing_recall": 0.5241245523278949, "mean_phishing_f1": 0.7556281858850971, "worst_phishing_f1": 0.5843889933913738, "best_model": "Linear SVM", "best_test_dataset": "legitphish_test", "best_phishing_f1": 0.9237222308528817}]}, "best_clean_holdout_by_test_dataset": [{"training_scenario": "combined_dataset", "model": "XGBoost", "test_dataset": "combined_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 12308, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 12,308 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 72667, "accuracy": 0.9747891064719887, "phishing_precision": 0.9850150091991866, "phishing_recall": 0.9710515011216648, "phishing_f1": 0.9779834154548732, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib", "train_seconds": 0.6762830830411986, "predict_seconds": 0.013777207932434976}, {"training_scenario": "legitphish", "model": "XGBoost", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 20175, "accuracy": 0.9996530359355639, "phishing_precision": 0.9995277078085643, "phishing_recall": 0.999921253642019, "phishing_f1": 0.99972444199504, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib", "train_seconds": 0.49804908398073167, "predict_seconds": 0.004462082986719906}, {"training_scenario": "phishstorm", "model": "XGBoost", "test_dataset": "phishstorm_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 19182, "accuracy": 0.9195600041705766, "phishing_precision": 0.9477437325905292, "phishing_recall": 0.8878914405010438, "phishing_f1": 0.9168418216114255, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.5263378749368712, "predict_seconds": 0.0051639999728649855}, {"training_scenario": "phiusiil_main", "model": "XGBoost", "test_dataset": "phiusiil_main_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 47074, "accuracy": 0.9959000722267068, "phishing_precision": 0.9991476560541489, "phishing_recall": 0.9912455232789494, "phishing_f1": 0.9951809033933432, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.5748812910169363, "predict_seconds": 0.008785209036432207}], "best_clean_holdout_by_training_scenario": [{"training_scenario": "combined_dataset", "model": "Random Forest", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 6209, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 6,209 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 13966, "accuracy": 0.9972791064012602, "phishing_precision": 0.9972033559728326, "phishing_recall": 0.9997596731554914, "phishing_f1": 0.9984798783902712, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib", "train_seconds": 1.5129354579839855, "predict_seconds": 0.014132541953586042}, {"training_scenario": "legitphish", "model": "XGBoost", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 0, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split.", "rows_tested": 20175, "accuracy": 0.9996530359355639, "phishing_precision": 0.9995277078085643, "phishing_recall": 0.999921253642019, "phishing_f1": 0.99972444199504, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_legitphish_80_20.joblib", "train_seconds": 0.49804908398073167, "predict_seconds": 0.004462082986719906}, {"training_scenario": "phishstorm", "model": "Linear SVM", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 216, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 216 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 19959, "accuracy": 0.9015982764667568, "phishing_precision": 0.8964945344892574, "phishing_recall": 0.9526556116318192, "phishing_f1": 0.9237222308528817, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/linear_svm_T_ON_phishstorm_80_20.joblib", "train_seconds": 0.053589124931022525, "predict_seconds": 0.0009391660569235682}, {"training_scenario": "phiusiil_main", "model": "Logistic Regression", "test_dataset": "legitphish_test", "evaluation_scope": "clean_holdout", "contains_training_rows": false, "training_url_overlap_removed": 5993, "row_source_note": "Untouched 20 percent test split rows only; these rows were not used for training the matching source split. 5,993 row(s) with URLs already seen in this training scenario were removed before scoring.", "rows_tested": 14182, "accuracy": 0.9940064870963192, "phishing_precision": 0.9934282584884995, "phishing_recall": 0.999921253642019, "phishing_f1": 0.9966641811545858, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/logistic_regression_T_ON_phiusiil_main_80_20.joblib", "train_seconds": 0.13027608301490545, "predict_seconds": 0.0010548749705776572}], "combined_training_comparison": [{"test_dataset": "combined_test", "combined_model": "XGBoost", "combined_f1": 0.9779834154548732, "single_source_scenario": "phiusiil_main", "single_source_model": "Linear SVM", "single_source_f1": 0.9069759593209661, "difference": 0.07100745613390713}, {"test_dataset": "legitphish_test", "combined_model": "Random Forest", "combined_f1": 0.9984798783902712, "single_source_scenario": "legitphish", "single_source_model": "XGBoost", "single_source_f1": 0.99972444199504, "difference": -0.001244563604768767}, {"test_dataset": "phishstorm_test", "combined_model": "XGBoost", "combined_f1": 0.9144449300699301, "single_source_scenario": "phishstorm", "single_source_model": "XGBoost", "single_source_f1": 0.9168418216114255, "difference": -0.0023968915414953607}, {"test_dataset": "phiusiil_main_test", "combined_model": "Random Forest", "combined_f1": 0.9947544587100964, "single_source_scenario": "phiusiil_main", "single_source_model": "XGBoost", "single_source_f1": 0.9951809033933432, "difference": -0.0004264446832468183}], "best_complete_dataset_diagnostic": {"training_scenario": "combined_dataset", "model": "Random Forest", "test_dataset": "complete_combined_dataset", "evaluation_scope": "complete_dataset", "contains_training_rows": true, "training_url_overlap_removed": 0, "row_source_note": "Diagnostic full combined dataset check; includes both training rows and untouched test rows.", "rows_tested": 393918, "accuracy": 0.9885737640828802, "phishing_precision": 0.9943777373750942, "phishing_recall": 0.9841938332684437, "phishing_f1": 0.9892595765395362, "model_file": "machine_learning/trained_models/2_cross_dataset_generalisation/random_forest_T_ON_combined_dataset_80_20.joblib", "train_seconds": 1.5129354579839855, "predict_seconds": 0.20596754201687872}}, "confusion_matrices": {"phiusiil_main::Logistic Regression::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19795, 309], [15, 26955]]}, "phiusiil_main::Logistic Regression::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12698, 1], [84, 1399]]}, "phiusiil_main::Logistic Regression::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9551, 29], [9602, 0]]}, "phiusiil_main::Logistic Regression::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[41986, 339], [9701, 26956]]}, "phiusiil_main::Logistic Regression::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[208983, 1631], [48521, 134783]]}, "phiusiil_main::Decision Tree::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19930, 174], [40, 26930]]}, "phiusiil_main::Decision Tree::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12699, 0], [87, 1396]]}, "phiusiil_main::Decision Tree::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9580, 0], [9602, 0]]}, "phiusiil_main::Decision Tree::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[42151, 174], [9727, 26930]]}, "phiusiil_main::Decision Tree::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[209805, 809], [48567, 134737]]}, "phiusiil_main::Random Forest::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19932, 172], [39, 26931]]}, "phiusiil_main::Random Forest::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12699, 0], [87, 1396]]}, "phiusiil_main::Random Forest::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9580, 0], [9602, 0]]}, "phiusiil_main::Random Forest::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[42153, 172], [9726, 26931]]}, "phiusiil_main::Random Forest::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[209797, 817], [48555, 134749]]}, "phiusiil_main::Linear SVM::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19768, 336], [2, 26968]]}, "phiusiil_main::Linear SVM::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12660, 39], [84, 1399]]}, "phiusiil_main::Linear SVM::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[7936, 1644], [6169, 3433]]}, "phiusiil_main::Linear SVM::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[40311, 2014], [6255, 30402]]}, "phiusiil_main::Linear SVM::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[200819, 9795], [31062, 152242]]}, "phiusiil_main::XGBoost::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19928, 176], [17, 26953]]}, "phiusiil_main::XGBoost::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12699, 0], [86, 1397]]}, "phiusiil_main::XGBoost::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9580, 0], [9602, 0]]}, "phiusiil_main::XGBoost::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[42149, 176], [9704, 26953]]}, "phiusiil_main::XGBoost::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[209728, 886], [48510, 134794]]}, "legitphish::Logistic Regression::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[13791, 6313], [0, 21078]]}, "legitphish::Logistic Regression::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12630, 69], [7, 7469]]}, "legitphish::Logistic Regression::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9345, 28], [9593, 9]]}, "legitphish::Logistic Regression::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[35708, 6410], [9600, 27158]]}, "legitphish::Logistic Regression::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[178589, 32025], [48001, 135303]]}, "legitphish::Decision Tree::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[17760, 2344], [0, 21078]]}, "legitphish::Decision Tree::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12692, 7], [8, 7468]]}, "legitphish::Decision Tree::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9362, 11], [9592, 10]]}, "legitphish::Decision Tree::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[39756, 2362], [9600, 27158]]}, "legitphish::Decision Tree::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[198713, 11901], [47969, 135335]]}, "legitphish::Random Forest::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[18978, 1126], [0, 21078]]}, "legitphish::Random Forest::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12697, 2], [7, 7469]]}, "legitphish::Random Forest::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9373, 0], [9602, 0]]}, "legitphish::Random Forest::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[40990, 1128], [9609, 27149]]}, "legitphish::Random Forest::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[205043, 5571], [48016, 135288]]}, "legitphish::Linear SVM::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12425, 7679], [0, 21078]]}, "legitphish::Linear SVM::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12617, 82], [4, 7472]]}, "legitphish::Linear SVM::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9345, 28], [9601, 1]]}, "legitphish::Linear SVM::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[34329, 7789], [9605, 27153]]}, "legitphish::Linear SVM::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[171824, 38790], [48036, 135268]]}, "legitphish::XGBoost::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[16923, 3181], [0, 21078]]}, "legitphish::XGBoost::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12698, 1], [6, 7470]]}, "legitphish::XGBoost::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[9373, 0], [9602, 0]]}, "legitphish::XGBoost::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[38936, 3182], [9608, 27150]]}, "legitphish::XGBoost::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[194546, 16068], [48017, 135287]]}, "phishstorm::Logistic Regression::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[11013, 9091], [5544, 21426]]}, "phishstorm::Logistic Regression::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12002, 481], [1539, 5937]]}, "phishstorm::Logistic Regression::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[7360, 2220], [930, 8672]]}, "phishstorm::Logistic Regression::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[30329, 11780], [7723, 34927]]}, "phishstorm::Logistic Regression::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[151967, 58647], [32519, 150785]]}, "phishstorm::Decision Tree::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[17553, 2551], [22416, 4554]]}, "phishstorm::Decision Tree::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[10033, 2450], [6201, 1275]]}, "phishstorm::Decision Tree::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[8537, 1043], [931, 8671]]}, "phishstorm::Decision Tree::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[36069, 6040], [28372, 14278]]}, "phishstorm::Decision Tree::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[183695, 26919], [113707, 69597]]}, "phishstorm::Random Forest::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[18765, 1339], [24459, 2511]]}, "phishstorm::Random Forest::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[11158, 1325], [6781, 695]]}, "phishstorm::Random Forest::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[8614, 966], [625, 8977]]}, "phishstorm::Random Forest::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[38484, 3625], [30588, 12062]]}, "phishstorm::Random Forest::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[194945, 15669], [123562, 59742]]}, "phishstorm::Linear SVM::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[10537, 9567], [4957, 22013]]}, "phishstorm::Linear SVM::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[11892, 591], [1373, 6103]]}, "phishstorm::Linear SVM::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[7233, 2347], [881, 8721]]}, "phishstorm::Linear SVM::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[29619, 12490], [6949, 35701]]}, "phishstorm::Linear SVM::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[148222, 62392], [29310, 153994]]}, "phishstorm::XGBoost::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[17537, 2567], [15354, 11616]]}, "phishstorm::XGBoost::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[11202, 1281], [4332, 3144]]}, "phishstorm::XGBoost::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[8506, 1074], [469, 9133]]}, "phishstorm::XGBoost::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[37191, 4918], [19356, 23294]]}, "phishstorm::XGBoost::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[186188, 24426], [79158, 104146]]}, "combined_dataset::Logistic Regression::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[17187, 2917], [115, 20963]]}, "combined_dataset::Logistic Regression::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12404, 79], [46, 1437]]}, "combined_dataset::Logistic Regression::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[7078, 2295], [1637, 7965]]}, "combined_dataset::Logistic Regression::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[36619, 5283], [1789, 28976]]}, "combined_dataset::Logistic Regression::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[184013, 26601], [9297, 174007]]}, "combined_dataset::Decision Tree::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19826, 278], [18, 21060]]}, "combined_dataset::Decision Tree::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12469, 14], [31, 1452]]}, "combined_dataset::Decision Tree::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[8256, 1117], [828, 8774]]}, "combined_dataset::Decision Tree::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[40497, 1405], [875, 29890]]}, "combined_dataset::Decision Tree::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[206877, 3737], [1199, 182105]]}, "combined_dataset::Random Forest::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19912, 192], [18, 21060]]}, "combined_dataset::Random Forest::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12480, 3], [35, 1448]]}, "combined_dataset::Random Forest::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[8439, 934], [664, 8938]]}, "combined_dataset::Random Forest::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[40775, 1127], [716, 30049]]}, "combined_dataset::Random Forest::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[207285, 3329], [1172, 182132]]}, "combined_dataset::Linear SVM::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[16707, 3397], [79, 20999]]}, "combined_dataset::Linear SVM::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12382, 101], [41, 1442]]}, "combined_dataset::Linear SVM::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[7001, 2372], [1569, 8033]]}, "combined_dataset::Linear SVM::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[36040, 5862], [1684, 29081]]}, "combined_dataset::Linear SVM::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[181189, 29425], [8745, 174559]]}, "combined_dataset::XGBoost::phiusiil_main_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[19900, 204], [10, 21068]]}, "combined_dataset::XGBoost::legitphish_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[12474, 9], [47, 1436]]}, "combined_dataset::XGBoost::phishstorm_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[8369, 1004], [562, 9040]]}, "combined_dataset::XGBoost::combined_test": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[40689, 1213], [619, 30146]]}, "combined_dataset::XGBoost::complete_combined_dataset": {"label_order": [0, 1], "label_names": {"0": "phishing", "1": "legitimate"}, "matrix": [[204690, 5924], [3103, 180201]]}}, "metric_guide": {"Accuracy": "Overall correctness across phishing and legitimate URLs.", "Phishing Precision": "When the model predicts phishing, how often it is right.", "Phishing Recall": "How many real phishing URLs the model catches.", "Phishing F1": "A combined phishing precision and recall score."}, "model_guide": {"Logistic Regression": "Simple linear baseline. Useful because it is fast, explainable, and shows whether the URL-only features already separate the classes.", "Decision Tree": "Rule-based model. Useful because its splits are easy to understand, but it can overfit one dataset.", "Random Forest": "Many decision trees combined. Useful because it is stronger than one tree and handles non-linear feature patterns.", "Linear SVM": "Margin-based linear classifier. Useful as a strong classical baseline for numeric feature vectors.", "XGBoost": "Gradient-boosted trees from the separate XGBoost library. Useful because it often performs strongly on tabular data."}}</script>
+<script>
+const report = JSON.parse(document.getElementById("reportData").textContent);
+const rows = report.metrics || [];
+const matrices = report.confusion_matrices || {};
+const decision = report.summary?.decision_summary || {};
+const metricLabels = {
+  accuracy: "Accuracy",
+  phishing_precision: "Phishing Precision",
+  phishing_recall: "Phishing Recall",
+  phishing_f1: "Phishing F1"
+};
+const scopeLabels = {
+  clean_holdout: "Clean Holdout",
+  complete_dataset: "Complete Dataset Diagnostic"
+};
+const columnTips = {
+  rank: "Position after sorting by the selected metric. Rank 1 is the current winner.",
+  training: "The dataset source used to train this model.",
+  model: "The machine-learning algorithm that was trained and tested.",
+  tested: "The dataset used to test predictions.",
+  scope: "Clean holdout uses unseen 20 percent test rows; complete diagnostic includes training rows.",
+  rows: "Number of URL rows scored in this result.",
+  overlap: "Rows removed before scoring because their exact URL already appeared in this model's training scenario.",
+  included: "Whether the test set includes rows that were also used during training.",
+  meanF1: "Average phishing F1 across the selected rows for this model.",
+  worstF1: "Lowest phishing F1 across the selected rows. Higher is more robust.",
+  bestScenario: "The strongest training/testing pair for this model under the current filters."
+};
+let activePreset = "clean";
+
+const controls = {
+  scope: document.getElementById("scopeFilter"),
+  training: document.getElementById("trainingFilter"),
+  tested: document.getElementById("testedFilter"),
+  model: document.getElementById("modelFilter"),
+  metric: document.getElementById("sortMetric")
+};
+
+function unique(values) {
+  return [...new Set(values.filter(Boolean))].sort();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function number(value, digits = 4) {
+  return Number(value || 0).toFixed(digits);
+}
+
+function count(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function metricInfo(metricKey) {
+  return report.metric_guide?.[metricLabels[metricKey]] || "";
+}
+
+function modelInfo(modelName) {
+  return report.model_guide?.[modelName] || "";
+}
+
+function fillSelect(select, values, allLabel, defaultValue = "all") {
+  select.innerHTML = "";
+  const all = document.createElement("option");
+  all.value = "all";
+  all.textContent = allLabel;
+  select.appendChild(all);
+  values.forEach((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.appendChild(option);
+  });
+  select.value = defaultValue;
+}
+
+function initialiseControls() {
+  fillSelect(
+    controls.scope,
+    unique(rows.map((row) => row.evaluation_scope)),
+    "All scopes",
+    "clean_holdout"
+  );
+  [...controls.scope.options].forEach((option) => {
+    if (option.value === "clean_holdout") option.textContent = "Clean holdout only";
+    if (option.value === "complete_dataset") option.textContent = "Complete diagnostic";
+  });
+  fillSelect(
+    controls.training,
+    unique(rows.map((row) => row.training_scenario)),
+    "All training scenarios"
+  );
+  fillSelect(
+    controls.tested,
+    unique(rows.map((row) => row.test_dataset)),
+    "All test datasets"
+  );
+  fillSelect(controls.model, unique(rows.map((row) => row.model)), "All models");
+  Object.entries(metricLabels).forEach(([value, label]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    option.title = metricInfo(value);
+    controls.metric.appendChild(option);
+  });
+  controls.metric.value = "phishing_f1";
+}
+
+function selected(select) {
+  return select.value === "all" ? null : select.value;
+}
+
+function applyPreset(name) {
+  activePreset = name;
+  document.querySelectorAll("[data-preset]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.preset === name);
+  });
+  controls.scope.value = "clean_holdout";
+  controls.training.value = "all";
+  controls.tested.value = "all";
+  controls.model.value = "all";
+  controls.metric.value = "phishing_f1";
+  if (name === "backend" && decision.backend_recommendation) {
+    controls.training.value = decision.backend_recommendation.training_scenario || "all";
+    controls.model.value = decision.backend_recommendation.model || "all";
+  }
+  if (name === "allrounder") controls.scope.value = "clean_holdout";
+  if (name === "main") controls.tested.value = "phiusiil_main_test";
+  if (name === "combined") controls.tested.value = "combined_test";
+  if (name === "singleSourceCombined") controls.tested.value = "combined_test";
+  if (name === "diagnostic") controls.scope.value = "complete_dataset";
+  render();
+}
+
+function filteredRows() {
+  const scope = selected(controls.scope);
+  const training = selected(controls.training);
+  const tested = selected(controls.tested);
+  const model = selected(controls.model);
+  return rows
+    .filter((row) => !scope || row.evaluation_scope === scope)
+    .filter((row) => !training || row.training_scenario === training)
+    .filter((row) => !tested || row.test_dataset === tested)
+    .filter((row) => !model || row.model === model)
+    .filter((row) => {
+      if (activePreset !== "external") return true;
+      return (
+        row.evaluation_scope === "clean_holdout" &&
+        row.test_dataset !== "phiusiil_main_test" &&
+        row.test_dataset !== "combined_test"
+      );
+    })
+    .filter((row) => {
+      if (activePreset !== "singleSourceCombined") return true;
+      return row.training_scenario !== "combined_dataset";
+    });
+}
+
+function sortRows(inputRows) {
+  const metric = controls.metric.value;
+  return [...inputRows].sort((a, b) => {
+    const primary = Number(b[metric] || 0) - Number(a[metric] || 0);
+    if (primary !== 0) return primary;
+    return Number(b.phishing_recall || 0) - Number(a.phishing_recall || 0);
+  });
+}
+
+function bestRow(inputRows) {
+  return sortRows(inputRows)[0] || null;
+}
+
+function summaryText(inputRows, metric) {
+  const best = bestRow(inputRows);
+  if (!best) return "No rows";
+  return `${count(inputRows.length)} rows. Winner: ${best.model} (${number(best[metric])})`;
+}
+
+function metricHeader(metricKey) {
+  const tip = escapeHtml(metricInfo(metricKey));
+  return `<span class="tooltip" data-tooltip="${tip}" tabindex="0">${escapeHtml(metricLabels[metricKey])} <span class="hint">?</span><span class="tooltip-text" role="tooltip">${tip}</span></span>`;
+}
+
+function columnHeader(label, tipKey) {
+  const tip = escapeHtml(columnTips[tipKey] || "");
+  return `<span class="tooltip" data-tooltip="${tip}" tabindex="0">${escapeHtml(label)} <span class="hint">?</span><span class="tooltip-text" role="tooltip">${tip}</span></span>`;
+}
+
+function modelCell(modelName) {
+  const tip = escapeHtml(modelInfo(modelName));
+  return `<span class="tooltip" data-tooltip="${tip}" tabindex="0">${escapeHtml(modelName)}<span class="tooltip-text" role="tooltip">${tip}</span></span>`;
+}
+
+function barCell(value) {
+  const width = Math.max(2, Math.min(100, Number(value || 0) * 100));
+  return `<div class="score-cell"><span>${number(value)}</span><div class="track"><div class="bar" style="width:${width}%"></div></div></div>`;
+}
+
+function groupedRows(inputRows, keyFn) {
+  const groups = new Map();
+  inputRows.forEach((row) => {
+    const key = keyFn(row);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(row);
+  });
+  return groups;
+}
+
+function average(inputRows, field) {
+  if (!inputRows.length) return 0;
+  return inputRows.reduce((total, row) => total + Number(row[field] || 0), 0) / inputRows.length;
+}
+
+function minValue(inputRows, field) {
+  if (!inputRows.length) return 0;
+  return Math.min(...inputRows.map((row) => Number(row[field] || 0)));
+}
+
+function renderModelSummary(inputRows) {
+  const groups = groupedRows(inputRows, (row) => row.model);
+  const summaries = [...groups.entries()].map(([modelName, modelRows]) => {
+    const best = bestRow(modelRows);
+    return {
+      model: modelName,
+      rows: modelRows.length,
+      meanF1: average(modelRows, "phishing_f1"),
+      worstF1: minValue(modelRows, "phishing_f1"),
+      meanPrecision: average(modelRows, "phishing_precision"),
+      meanRecall: average(modelRows, "phishing_recall"),
+      meanAccuracy: average(modelRows, "accuracy"),
+      best
+    };
+  }).sort((a, b) => {
+    const primary = b.meanF1 - a.meanF1;
+    if (primary !== 0) return primary;
+    return b.worstF1 - a.worstF1;
+  });
+  document.getElementById("modelSummaryStats").textContent = `${summaries.length} models compared`;
+  if (!summaries.length) {
+    document.getElementById("modelSummaryView").innerHTML = '<p class="empty">No matching model summary.</p>';
+    return;
+  }
+  const html = [`<table><thead><tr>
+    <th>${columnHeader("Model", "model")}</th>
+    <th class="num">${columnHeader("Mean F1", "meanF1")}</th>
+    <th class="num">${columnHeader("Worst F1", "worstF1")}</th>
+    <th class="num">${metricHeader("phishing_precision")}</th>
+    <th class="num">${metricHeader("phishing_recall")}</th>
+    <th class="num">${metricHeader("accuracy")}</th>
+    <th>${columnHeader("Best Scenario", "bestScenario")}</th>
+  </tr></thead><tbody>`];
+  summaries.forEach((summary, index) => {
+    const winner = index === 0 ? ' <span class="winner">Best model</span>' : "";
+    html.push(`<tr>
+      <td>${modelCell(summary.model)}${winner}</td>
+      <td class="num">${barCell(summary.meanF1)}</td>
+      <td class="num">${number(summary.worstF1)}</td>
+      <td class="num">${number(summary.meanPrecision)}</td>
+      <td class="num">${number(summary.meanRecall)}</td>
+      <td class="num">${number(summary.meanAccuracy)}</td>
+      <td>${escapeHtml(summary.best.training_scenario)} / ${escapeHtml(summary.best.test_dataset)}</td>
+    </tr>`);
+  });
+  html.push("</tbody></table>");
+  document.getElementById("modelSummaryView").innerHTML = html.join("");
+}
+
+function renderScenarioView(inputRows) {
+  const groups = groupedRows(
+    inputRows,
+    (row) => `${row.training_scenario}::${row.test_dataset}`
+  );
+  const summaries = [...groups.entries()].map(([key, scenarioRows]) => {
+    const best = bestRow(scenarioRows);
+    const [training, tested] = key.split("::");
+    return { training, tested, rows: scenarioRows.length, best };
+  }).sort((a, b) => a.training.localeCompare(b.training) || a.tested.localeCompare(b.tested));
+  document.getElementById("scenarioSummary").textContent = `${summaries.length} scenarios under current filters`;
+  if (!summaries.length) {
+    document.getElementById("scenarioView").innerHTML = '<p class="empty">No matching scenarios.</p>';
+    return;
+  }
+  const html = [`<table><thead><tr>
+    <th>${columnHeader("Training", "training")}</th>
+    <th>${columnHeader("Tested On", "tested")}</th>
+    <th>${columnHeader("Winning Model", "model")}</th>
+    <th class="num">${metricHeader("phishing_f1")}</th>
+    <th class="num">${metricHeader("phishing_precision")}</th>
+    <th class="num">${metricHeader("phishing_recall")}</th>
+    <th class="num">${metricHeader("accuracy")}</th>
+    <th class="num">${columnHeader("Rows", "rows")}</th>
+  </tr></thead><tbody>`];
+  summaries.forEach((summary) => {
+    html.push(`<tr>
+      <td>${escapeHtml(summary.training)}</td>
+      <td>${escapeHtml(summary.tested)}</td>
+      <td>${modelCell(summary.best.model)} <span class="winner">Winner</span></td>
+      <td class="num">${barCell(summary.best.phishing_f1)}</td>
+      <td class="num">${number(summary.best.phishing_precision)}</td>
+      <td class="num">${number(summary.best.phishing_recall)}</td>
+      <td class="num">${number(summary.best.accuracy)}</td>
+      <td class="num">${count(summary.best.rows_tested)}</td>
+    </tr>`);
+  });
+  html.push("</tbody></table>");
+  document.getElementById("scenarioView").innerHTML = html.join("");
+}
+
+function renderRanking(inputRows) {
+  const metric = controls.metric.value;
+  const sorted = sortRows(inputRows);
+  document.getElementById("rankingSummary").textContent = summaryText(sorted, metric);
+  if (!sorted.length) {
+    document.getElementById("rankingView").innerHTML = '<p class="empty">No matching rows.</p>';
+    return;
+  }
+  const html = [`<table><thead><tr>
+    <th>${columnHeader("Rank", "rank")}</th>
+    <th>${columnHeader("Training", "training")}</th>
+    <th>${columnHeader("Model", "model")}</th>
+    <th>${columnHeader("Tested On", "tested")}</th>
+    <th>${columnHeader("Scope", "scope")}</th>
+    <th class="num">${metricHeader(metric)}</th>
+    <th class="num">${metricHeader("phishing_precision")}</th>
+    <th class="num">${metricHeader("phishing_recall")}</th>
+    <th class="num">${metricHeader("accuracy")}</th>
+  </tr></thead><tbody>`];
+  sorted.forEach((row, index) => {
+    const winner = index === 0 ? ' <span class="winner">Winner</span>' : "";
+    html.push(`<tr>
+      <td>${index + 1}</td>
+      <td>${escapeHtml(row.training_scenario)}${winner}</td>
+      <td>${modelCell(row.model)}</td>
+      <td>${escapeHtml(row.test_dataset)}</td>
+      <td>${escapeHtml(scopeLabels[row.evaluation_scope] || row.evaluation_scope)}</td>
+      <td class="num">${barCell(row[metric])}</td>
+      <td class="num">${number(row.phishing_precision)}</td>
+      <td class="num">${number(row.phishing_recall)}</td>
+      <td class="num">${number(row.accuracy)}</td>
+    </tr>`);
+  });
+  html.push("</tbody></table>");
+  document.getElementById("rankingView").innerHTML = html.join("");
+}
+
+function renderMatrix(inputRows) {
+  const metric = controls.metric.value;
+  const trainingNames = unique(inputRows.map((row) => row.training_scenario));
+  const testNames = unique(inputRows.map((row) => row.test_dataset));
+  document.getElementById("matrixSummary").textContent = `${trainingNames.length} training rows by ${testNames.length} test columns`;
+  if (!trainingNames.length || !testNames.length) {
+    document.getElementById("matrixView").innerHTML = '<p class="empty">No matching matrix cells.</p>';
+    return;
+  }
+  const html = [`<table class="matrix-table"><thead><tr><th>${columnHeader("Training Scenario", "training")}</th>`];
+  testNames.forEach((testName) => html.push(`<th>${escapeHtml(testName)}</th>`));
+  html.push("</tr></thead><tbody>");
+  trainingNames.forEach((trainingName) => {
+    html.push(`<tr><th>${escapeHtml(trainingName)}</th>`);
+    testNames.forEach((testName) => {
+      const cellRows = inputRows.filter(
+        (row) => row.training_scenario === trainingName && row.test_dataset === testName
+      );
+      const best = bestRow(cellRows);
+      if (!best) {
+        html.push('<td class="muted-cell">-</td>');
+      } else {
+        const intensity = Math.round(Math.max(8, Math.min(92, Number(best[metric] || 0) * 92)));
+        html.push(`<td style="--heat:${intensity}%">
+          <strong>${number(best[metric])}</strong>
+          <span>${escapeHtml(best.model)}</span>
+        </td>`);
+      }
+    });
+    html.push("</tr>");
+  });
+  html.push("</tbody></table>");
+  document.getElementById("matrixView").innerHTML = html.join("");
+}
+
+function renderDetails(inputRows) {
+  const metric = controls.metric.value;
+  const sorted = sortRows(inputRows);
+  document.getElementById("detailSummary").textContent = `${count(sorted.length)} exact model/test rows`;
+  if (!sorted.length) {
+    document.getElementById("detailView").innerHTML = '<p class="empty">No matching details.</p>';
+    return;
+  }
+  const html = [`<table><thead><tr>
+    <th>${columnHeader("Training", "training")}</th>
+    <th>${columnHeader("Model", "model")}</th>
+    <th>${columnHeader("Tested On", "tested")}</th>
+    <th>${columnHeader("Rows", "rows")}</th>
+    <th>${columnHeader("URL Overlap Removed", "overlap")}</th>
+    <th>${columnHeader("Training Rows Included?", "included")}</th>
+    <th class="num">${metricHeader("accuracy")}</th>
+    <th class="num">${metricHeader("phishing_precision")}</th>
+    <th class="num">${metricHeader("phishing_recall")}</th>
+    <th class="num">${metricHeader("phishing_f1")}</th>
+  </tr></thead><tbody>`];
+  sorted.forEach((row) => {
+    html.push(`<tr>
+      <td>${escapeHtml(row.training_scenario)}</td>
+      <td>${modelCell(row.model)}</td>
+      <td>${escapeHtml(row.test_dataset)}</td>
+      <td>${count(row.rows_tested)}</td>
+      <td>${count(row.training_url_overlap_removed || 0)}</td>
+      <td>${row.contains_training_rows ? "Yes" : "No"}</td>
+      <td class="num">${number(row.accuracy)}</td>
+      <td class="num">${number(row.phishing_precision)}</td>
+      <td class="num">${number(row.phishing_recall)}</td>
+      <td class="num">${row[metric] === row.phishing_f1 ? barCell(row.phishing_f1) : number(row.phishing_f1)}</td>
+    </tr>`);
+  });
+  html.push("</tbody></table>");
+  document.getElementById("detailView").innerHTML = html.join("");
+}
+
+function renderConfusion(inputRows) {
+  const sorted = sortRows(inputRows);
+  if (!sorted.length) {
+    document.getElementById("confusionView").innerHTML = '<p class="empty">No matching confusion matrices.</p>';
+    return;
+  }
+  const html = [];
+  sorted.forEach((row, index) => {
+    const key = `${row.training_scenario}::${row.model}::${row.test_dataset}`;
+    const payload = matrices[key];
+    if (!payload) return;
+    const matrix = payload.matrix || [[0, 0], [0, 0]];
+    html.push(`<details ${index === 0 ? "open" : ""}>
+      <summary>${escapeHtml(row.training_scenario)} / ${escapeHtml(row.model)} / ${escapeHtml(row.test_dataset)}</summary>
+      <table>
+        <thead><tr><th>Actual / Predicted</th><th class="num">0 phishing</th><th class="num">1 legitimate</th></tr></thead>
+        <tbody>
+          <tr><td>0 phishing</td><td class="num">${count(matrix[0][0])}</td><td class="num">${count(matrix[0][1])}</td></tr>
+          <tr><td>1 legitimate</td><td class="num">${count(matrix[1][0])}</td><td class="num">${count(matrix[1][1])}</td></tr>
+        </tbody>
+      </table>
+    </details>`);
+  });
+  document.getElementById("confusionView").innerHTML = html.join("") || '<p class="empty">No matching confusion matrices.</p>';
+}
+
+function render() {
+  const matches = filteredRows();
+  renderModelSummary(matches);
+  renderScenarioView(matches);
+  renderRanking(matches);
+  renderMatrix(matches);
+  renderDetails(matches);
+  renderConfusion(matches);
+}
+
+initialiseControls();
+Object.values(controls).forEach((control) => {
+  control.addEventListener("change", () => {
+    activePreset = "custom";
+    document.querySelectorAll("[data-preset]").forEach((button) => button.classList.remove("active"));
+    render();
+  });
+});
+document.getElementById("resetFilters").addEventListener("click", () => applyPreset("clean"));
+document.querySelectorAll("[data-preset]").forEach((button) => {
+  button.addEventListener("click", () => applyPreset(button.dataset.preset));
+});
+applyPreset("clean");
+</script>
+</body>
+</html>

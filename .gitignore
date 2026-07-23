@@ -1,0 +1,68 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Python environments and local config
+.env
+.envrc
+.venv/
+venv/
+env/
+ENV/
+
+# Build/package outputs
+build/
+dist/
+.run/
+.codegraph/
+*.egg-info/
+.eggs/
+
+# Local dissertation/write-up material
+docs/
+*.docx
+~$*.docx
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
+tempCodeRunnerFile.py
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Frontend generated/local files
+frontend/node_modules/
+frontend/dist/
+frontend/.current-ui*.png
+
+# Large/generated datasets are documented and recreated by scripts.
+machine_learning/datasets/main/raw/*
+machine_learning/datasets/main/processed/*
+machine_learning/datasets/external_testing/*/raw/*
+machine_learning/datasets/external_testing/*/processed/*
+machine_learning/datasets/splits/*.csv
+!machine_learning/datasets/main/raw/.gitkeep
+!machine_learning/datasets/main/processed/.gitkeep
+!machine_learning/datasets/external_testing/*/raw/.gitkeep
+!machine_learning/datasets/external_testing/*/processed/.gitkeep
+
+# Generated experiment outputs can be recreated from scripts.
+machine_learning/experiments/interactive_runs/
+machine_learning/experiments/*/*.png
+machine_learning/experiments/*/*.pdf
+
+# Trained model artefacts are generated during experiments.
+machine_learning/trained_models/**/*.joblib
+machine_learning/trained_models/**/*.pkl
+
+# Keep the small default backend model in Git so the web app can run after clone.
+!machine_learning/trained_models/2_cross_dataset_generalisation/xgboost_T_ON_combined_dataset_80_20.joblib
